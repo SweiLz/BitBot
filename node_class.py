@@ -43,3 +43,52 @@ class NodeSub:
 # while True:
 #     print("..")
 #     time.sleep(3)
+
+#################################### PUBLISHER
+# import time
+# from node_class import NodePub
+
+# def main():
+#     stock_data = {
+#         'symbol': 'ABB',
+#         'price' : 230
+#     }
+#     stock_data2 = [10,20,30,40,50] 
+
+#     fb_bot = NodePub("tcp://127.0.0.1:5000")
+
+#     while True:
+#         fb_bot.send('speaker_hdmi',stock_data)
+#         time.sleep(1)
+
+# if __name__ == '__main__':
+#     main()
+
+######################## SUBSCRIBE
+# from node_class import NodeSub
+# import pyaudio
+
+
+# def main():
+#     speaker_hdmi = NodeSub("tcp://127.0.0.1:5000","speaker_dmi")
+#     microphone = NodeSub("tcp://127.0.0.1:5000","microphone")
+
+#     def ok(msg):
+#         print("OK:",msg['symbol'])
+    
+#     FORMAT = pyaudio.paInt16
+#     CHANNELS = 2
+#     RATE = 44100
+#     audio = pyaudio.PyAudio()
+#     stream = audio.open(format=FORMAT,channels=CHANNELS,rate=RATE,output=True)
+    
+#     def speak(data):
+#         stream.write(data)
+    
+
+#     microphone.run(speak)
+
+    
+
+# if __name__ == '__main__':
+#     main()
