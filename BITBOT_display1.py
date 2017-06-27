@@ -1,11 +1,26 @@
-from subprocess import DEVNULL, STDOUT, check_call
+
+# from subprocess import DEVNULL, STDOUT, check_call
+# from pythonosc import dispatcher
+# from pythonosc import osc_server
+# import argparse
+
+
+# def display(unused_addr, v1='../../small.mp4'):
+    # cmd = ['omxplayer', '--display', '0', '-o', 'alsa', v1]
+    # print('command : ', cmd)
+    # check_call(cmd, stdout=DEVNULL, stderr=STDOUT)
+
+from subprocess import call
 from pythonosc import dispatcher
 from pythonosc import osc_server
+import argparse
 
 
-def display(unused_addr, v1):
-    cmd = ['omxplayer', '--display', '0', '-o', 'alsa', '../../small.mp4']
-    check_call(cmd, stdout=DEVNULL, stderr=STDOUT)
+def display(unused_addr, v1='../../small.mp4'):
+    # cmd = ['omxplayer', '--display', '5', '-o', 'alsa', v1]
+    cmd = 'omxplayer --display 0 '+ v1
+    print('command : ', cmd)
+    call(cmd, shell=True)
 
 
 parser = argparse.ArgumentParser()
@@ -19,3 +34,4 @@ dispatcher.map("/d", display)
 server = osc_server.ThreadingOSCUDPServer(
     (args.ip, args.port), dispatcher)
 print("Serving on {}".format(server.server_address))
+server.serve_forever()

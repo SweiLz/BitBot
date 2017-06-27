@@ -10,7 +10,8 @@ import math
 import pygame
 import apiai
 import json
-
+from pythonosc import osc_message_builder
+from pythonosc import udp_client
 OSC_state = True
 CLIENT_ACCESS_TOKEN = '29234bbc7c0c4467ab38edd3ebb6c4f3'
 pygame.mixer.init()
@@ -105,10 +106,13 @@ def apiai_do(request, text):
         print("apiai speech fail.")
     if action == 'Video':
         display_number = response['result']['parameters']['Number']
-        if display_number == '1' :
-            client_1.send_message("/d",1)
-        if display_number == '2' :
-            client_2.send_message("/d",2)
+        if display_number == '1':
+            client_1.send_message("/d", '../../small.mp4')
+        elif display_number == '2':
+            client_2.send_message("/d", '../../small.mp4')
+        elif display_number == '3':
+            client_1.send_message("/d", '../../small.mp4')
+            client_2.send_message("/d", '../../small.mp4')
     if action == 'sound-motion':
         dreg1 = []
         direction = 'None'
