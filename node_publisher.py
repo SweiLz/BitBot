@@ -8,7 +8,7 @@ def main():
     }
     stock_data2 = [10,20,30,40,50] 
 
-    fb_bot = NodePub("127.0.0.1:5000")
+    fb_bot = NodePub("tcp://127.0.0.1:5000")
 
     while True:
         fb_bot.send('speaker_hdmi',stock_data)

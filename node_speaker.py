@@ -3,11 +3,7 @@ import pyaudio
 
 
 def main():
-    speaker_hdmi = NodeSub("tcp://127.0.0.1:5000","speaker_dmi")
-    microphone = NodeSub("tcp://127.0.0.1:5000","microphone")
-
-    def ok(msg):
-        print("OK:",msg['symbol'])
+    speaker = NodeSub("tcp://127.0.0.1:4000","speaker")
     
     FORMAT = pyaudio.paInt16
     CHANNELS = 2
@@ -15,12 +11,10 @@ def main():
     audio = pyaudio.PyAudio()
     stream = audio.open(format=FORMAT,channels=CHANNELS,rate=RATE,output=True)
     
-    def speak(data):
+    def speaker_out(data):
         stream.write(data)
-    
 
-    microphone.run(speak)
-
+    speaker.run(speaker_out)
     
 
 if __name__ == '__main__':
