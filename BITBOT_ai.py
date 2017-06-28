@@ -1,4 +1,4 @@
-from BITBOT_serial import *
+#from BITBOT_serial import *
 from count21 import *
 from gtts import gTTS
 from googletrans import Translator
@@ -69,20 +69,21 @@ def speech_input():
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--ip", default="127.0.0.1",
+parser.add_argument("--ip", default="192.168.1.244",
                     help="The ip of the OSC server")
 parser.add_argument("--port", type=int, default=5001,
                     help="The port the OSC server is listening on")
 args = parser.parse_args()
-client_1 = udp_client.SimpleUDPClient(args.ip, args.port)
+client = [0]
+client.append(udp_client.SimpleUDPClient(args.ip, args.port))
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--ip", default="127.0.0.1",
+parser.add_argument("--ip", default="192.168.1.244",
                     help="The ip of the OSC server")
 parser.add_argument("--port", type=int, default=5002,
                     help="The port the OSC server is listening on")
 args = parser.parse_args()
-client_2 = udp_client.SimpleUDPClient(args.ip, args.port)
+client.append(udp_client.SimpleUDPClient(args.ip, args.port))
 
 
 def apiai_do(request, text):
@@ -105,14 +106,21 @@ def apiai_do(request, text):
     except:
         print("apiai speech fail.")
     if action == 'Video':
-        display_number = response['result']['parameters']['Number']
-        if display_number == '1':
-            client_1.send_message("/d", '../../small.mp4')
-        elif display_number == '2':
-            client_2.send_message("/d", '../../small.mp4')
-        elif display_number == '3':
-            client_1.send_message("/d", '../../small.mp4')
-            client_2.send_message("/d", '../../small.mp4')
+        display_number = response['result']['parameters']['Number']  # list
+        v_action = response['result']['parameters']['Video-Command']
+        if v_action == 'เล่น':
+            if len(display_number) == 1:
+                client[display_number[0]].send_message("/d", '../../small.mp4')
+            elif len(display_number) == 2:
+                client[display_number[0]].send_message("/d", '../../small.mp4')
+                client[display_number[1]].send_message("/d", '../../small.mp4')
+        if v_action == 'หยุดเล่น':
+            if len(display_number) == 1:
+                client[display_number[0]].send_message("/q", 1)
+            elif len(display_number) == 2:
+                client[display_number[0]].send_message("/q", 1)
+                client[display_number[1]].send_message("/q", 1)
+
     if action == 'sound-motion':
         dreg1 = []
         direction = 'None'
