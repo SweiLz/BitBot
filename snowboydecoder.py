@@ -30,17 +30,14 @@ def print_topic(unused_addr, v1):
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--ip",
-                    default="192.168.1.244", help="The ip to listen on")
-parser.add_argument("--port",
-                    type=int, default=5005, help="The port to listen on")
+parser.add_argument("--ip",default="192.168.1.244", help="The ip to listen on")
+parser.add_argument("--port",type=int, default=5005, help="The port to listen on")
 args = parser.parse_args()
 dispatcher = dispatcher.Dispatcher()
 dispatcher.map("/p", print)
 dispatcher.map("/topic", print_topic)
 dispatcher.map("/filter", print_volume_handler)
-server = osc_server.ThreadingOSCUDPServer(
-    (args.ip, args.port), dispatcher)
+server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
 print("Serving on {}".format(server.server_address))
 '''osc'''
 
@@ -110,10 +107,7 @@ class HotwordDetector(object):
     :param audio_gain: multiply input volume by this factor.
     """
 
-    def __init__(self, decoder_model,
-                 resource=RESOURCE_FILE,
-                 sensitivity=[],
-                 audio_gain=1):
+    def __init__(self, decoder_model,resource=RESOURCE_FILE,sensitivity=[],audio_gain=1):
         def audio_callback(in_data, frame_count, time_info, status):
             self.ring_buffer.extend(in_data)
             play_data = chr(0) * len(in_data)
@@ -125,8 +119,7 @@ class HotwordDetector(object):
         if ts is not list:
             sensitivity = [sensitivity]
         model_str = ",".join(decoder_model)
-        self.detector = snowboydetect.SnowboyDetect(
-            resource_filename=resource.encode(), model_str=model_str.encode())
+        self.detector = snowboydetect.SnowboyDetect(resource_filename=resource.encode(), model_str=model_str.encode())
         self.detector.SetAudioGain(audio_gain)
         self.num_hotwords = self.detector.NumHotwords()
         if len(decoder_model) > 1 and len(sensitivity) == 1:
