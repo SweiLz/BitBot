@@ -10,8 +10,7 @@ import math
 import pygame
 import apiai
 import json
-from pythonosc import osc_message_builder
-from pythonosc import udp_client
+from pythonosc import osc_message_builder, udp_client
 OSC_state = True
 CLIENT_ACCESS_TOKEN = '29234bbc7c0c4467ab38edd3ebb6c4f3'
 pygame.mixer.init()
@@ -68,22 +67,8 @@ def speech_input():
         return 0, 0
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--ip", default="192.168.1.244",
-                    help="The ip of the OSC server")
-parser.add_argument("--port", type=int, default=5001,
-                    help="The port the OSC server is listening on")
-args = parser.parse_args()
-client = [0]
-client.append(udp_client.SimpleUDPClient(args.ip, args.port))
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--ip", default="192.168.1.244",
-                    help="The ip of the OSC server")
-parser.add_argument("--port", type=int, default=5002,
-                    help="The port the OSC server is listening on")
-args = parser.parse_args()
-client.append(udp_client.SimpleUDPClient(args.ip, args.port))
+client_1 = udp_client.SimpleUDPClient("127.0.0.1", 5001)
+client_2 = udp_client.SimpleUDPClient("127.0.0.1", 5002)
 
 
 def apiai_do(request, text):

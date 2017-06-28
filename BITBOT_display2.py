@@ -2,7 +2,6 @@ import subprocess
 from pythonosc import dispatcher
 from pythonosc import osc_server
 
-
 myprocess = 0
 
 
@@ -20,9 +19,15 @@ def quit_video(unused_addr, v1):
         myprocess.communicate(bytes('q', 'utf-8'))
 
 
-dispatcher = dispatcher.Dispatcher()
-dispatcher.map("/d", display)
-dispatcher.map("/q", quit_video)
-server = osc_server.ThreadingOSCUDPServer(("192.168.1.244", 5002), dispatcher)
-print("Display 2 Serving on {}".format(server.server_address))
-server.serve_forever()
+def main():
+    dispatcher = dispatcher.Dispatcher()
+    dispatcher.map("/d", display)
+    dispatcher.map("/q", quit_video)
+    server = osc_server.ThreadingOSCUDPServer(
+        ("192.168.1.244", 5002), dispatcher)
+    print("Display 2 Serving on {}".format(server.server_address))
+    server.serve_forever()
+
+
+if __name__ == '__main__':
+    main()
