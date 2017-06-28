@@ -1,22 +1,26 @@
-import subprocess
+
+# from subprocess import DEVNULL, STDOUT, check_call
+# from pythonosc import dispatcher
+# from pythonosc import osc_server
+# import argparse
+
+
+# def display(unused_addr, v1='../../small.mp4'):
+    # cmd = ['omxplayer', '--display', '0', '-o', 'alsa', v1]
+    # print('command : ', cmd)
+    # check_call(cmd, stdout=DEVNULL, stderr=STDOUT)
+
+from subprocess import call
 from pythonosc import dispatcher
 from pythonosc import osc_server
 import argparse
 
-myprocess = 0
 
-
-def display(unused_addr, v1='../../small.mp4', v2=''):
-    global myprocess
-    cmd = ['omxplayer', '-b', '--display', '0', v1]
+def display(unused_addr, v1='../../small.mp4'):
+    # cmd = ['omxplayer', '--display', '5', '-o', 'alsa', v1]
+    cmd = 'omxplayer --display 0 '+ v1
     print('command : ', cmd)
-    myprocess = subprocess.Popen(cmd, stdin=subprocess.PIPE)
-
-
-def quit(unused_addr, v1):
-    global myprocess
-    if myprocess != 0:
-        myprocess.stdin.write(b('q'))
+    call(cmd, shell=True)
 
 
 parser = argparse.ArgumentParser()
@@ -27,7 +31,6 @@ parser.add_argument("--port",
 args = parser.parse_args()
 dispatcher = dispatcher.Dispatcher()
 dispatcher.map("/d", display)
-dispatcher.map("/q", quit)
 server = osc_server.ThreadingOSCUDPServer(
     (args.ip, args.port), dispatcher)
 print("Serving on {}".format(server.server_address))
