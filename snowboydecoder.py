@@ -8,7 +8,6 @@ import os
 import logging
 from pythonosc import dispatcher
 from pythonosc import osc_server
-'''osc'''
 
 
 def print_volume_handler(unused_addr, v1, v2, v3):
@@ -28,16 +27,11 @@ def print_topic(unused_addr, v1):
     except:
         print('facebook message command failed')
 
-
-parser = argparse.ArgumentParser()
-parser.add_argument("--ip",default="192.168.1.244", help="The ip to listen on")
-parser.add_argument("--port",type=int, default=5005, help="The port to listen on")
-args = parser.parse_args()
 dispatcher = dispatcher.Dispatcher()
 dispatcher.map("/p", print)
 dispatcher.map("/topic", print_topic)
 dispatcher.map("/filter", print_volume_handler)
-server = osc_server.ThreadingOSCUDPServer((args.ip, args.port), dispatcher)
+server = osc_server.ThreadingOSCUDPServer(("192.168.1.244",5005), dispatcher)
 print("Serving on {}".format(server.server_address))
 '''osc'''
 
