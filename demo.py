@@ -4,11 +4,9 @@ import signal
 
 interrupted = False
 
-
 def signal_handler(signal, frame):
     global interrupted
     interrupted = True
-
 
 def interrupt_callback():
     global interrupted

@@ -1,16 +1,8 @@
 
-
-
-
-# print("มาเล่นเกม 21 กัน ใครนับเลข 21 แพ้นะ")
-
-
-
 class Count21(object):
     def __init__(self):
         self.list_count = []
         self.win_list = [1,5,9,13,17,21]
-
 
     def user(self, list_user=None):
         ret_list = []

@@ -2,12 +2,11 @@
 import snowboydecoder
 
 models = ["resources/BitBot.pmdl"]
-
+callbacks = [bitbot]
 
 def bitbot():
     detector.terminate()
     print("Conversation Started")
-    # snowboydecoder.play_audio_file()
     snowboydecoder.bot_speak("None", "resources/ding.wav")
     snowboydecoder.main()
     print("Conversation Stop")
@@ -17,7 +16,6 @@ def bitbot():
     detector.start(callbacks)
 
 
-callbacks = [bitbot]
 
 
 detector = snowboydecoder.HotwordDetector(models, sensitivity=0.5)
