@@ -67,8 +67,9 @@ def speech_input():
         return 0, 0
 
 
-client_1 = udp_client.SimpleUDPClient("127.0.0.1", 5001)
-client_2 = udp_client.SimpleUDPClient("127.0.0.1", 5002)
+client = [0]
+client.append(udp_client.SimpleUDPClient("192.168.1.244", 5001))
+client.append(udp_client.SimpleUDPClient("192.168.1.244", 5002))
 
 
 def apiai_do(request, text):
@@ -87,7 +88,10 @@ def apiai_do(request, text):
         print("apiai action fail.")
     try:
         print(response['result']['fulfillment']['speech'])
-        bot_speak(response['result']['fulfillment']['speech'], wait=True)
+        wait_state = False
+        if action != 'play-game':
+            wait_state = True
+        bot_speak(response['result']['fulfillment']['speech'], wait=wait_state)
     except:
         print("apiai speech fail.")
     if action == 'Video':
