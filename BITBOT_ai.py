@@ -1,4 +1,4 @@
-from BITBOT_serial import *
+#from BITBOT_serial import *
 from count21 import *
 from gtts import gTTS
 from googletrans import Translator
@@ -11,12 +11,13 @@ import pygame
 import apiai
 import json
 from pythonosc import osc_message_builder, udp_client
-
 OSC_state = True
 CLIENT_ACCESS_TOKEN = '29234bbc7c0c4467ab38edd3ebb6c4f3'
 pygame.mixer.init()
 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
-translator = Translator(service_urls=['translate.google.co.th','translate.google.com'])
+translator = Translator(service_urls=['translate.google.co.th',
+                                      'translate.google.com', ])
+
 
 def bot_speak(text, filename='temp.mp3', wait=True, quit=False):
     try:
@@ -65,6 +66,7 @@ def speech_input():
         print("Not in service ")
         return 0, 0
 
+
 client_1 = udp_client.SimpleUDPClient("127.0.0.1", 5001)
 client_2 = udp_client.SimpleUDPClient("127.0.0.1", 5002)
 
@@ -89,14 +91,21 @@ def apiai_do(request, text):
     except:
         print("apiai speech fail.")
     if action == 'Video':
-        display_number = response['result']['parameters']['Number']
-        if display_number == '1':
-            client_1.send_message("/d", '../../small.mp4')
-        elif display_number == '2':
-            client_2.send_message("/d", '../../small.mp4')
-        elif display_number == '3':
-            client_1.send_message("/d", '../../small.mp4')
-            client_2.send_message("/d", '../../small.mp4')
+        display_number = response['result']['parameters']['Number']  # list
+        v_action = response['result']['parameters']['Video-Command']
+        if v_action == 'เล่น':
+            if len(display_number) == 1:
+                client[display_number[0]].send_message("/d", '../../small.mp4')
+            elif len(display_number) == 2:
+                client[display_number[0]].send_message("/d", '../../small.mp4')
+                client[display_number[1]].send_message("/d", '../../small.mp4')
+        if v_action == 'หยุดเล่น':
+            if len(display_number) == 1:
+                client[display_number[0]].send_message("/q", 1)
+            elif len(display_number) == 2:
+                client[display_number[0]].send_message("/q", 1)
+                client[display_number[1]].send_message("/q", 1)
+
     if action == 'sound-motion':
         dreg1 = []
         direction = 'None'
