@@ -109,6 +109,15 @@ def apiai_do(request, text):
             elif len(display_number) == 2:
                 client[display_number[0]].send_message("/q", 1)
                 client[display_number[1]].send_message("/q", 1)
+        if v_action == 'เล่นวิดีโอใหม่':
+            if len(display_number) == 1:
+                client[display_number[0]].send_message("/q", 1)
+                client[display_number[0]].send_message("/d", '../../small.mp4')
+            elif len(display_number) == 2:
+                client[display_number[0]].send_message("/q", 1)
+                client[display_number[1]].send_message("/q", 1)
+                client[display_number[0]].send_message("/d", '../../small.mp4')
+                client[display_number[1]].send_message("/d", '../../small.mp4')
 
     if action == 'sound-motion':
         dreg1 = []

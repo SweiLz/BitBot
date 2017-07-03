@@ -14,4 +14,4 @@ from pythonosc import udp_client
 if __name__ == "__main__":
 
     client = udp_client.SimpleUDPClient("192.168.1.244", 4001)
-    client.send_message("/d", "../../small.mp4")
+    client.send_message("/n", "../../small.mp4")
