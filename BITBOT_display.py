@@ -8,7 +8,7 @@ import sys
 myprocess = 0
 myprocess2 = 0
 c = 0
-i = 0
+i = 9999
 parser = argparse.ArgumentParser()
 parser.add_argument("DISPLAY_NUMBER")
 args = parser.parse_args()
@@ -27,7 +27,7 @@ def display(unused_addr, v1='../../small.mp4', v2=''):
     global myprocess, i
     cmd = ['omxplayer', '--no-osd', '--layer',
            str(i), '-b', '-o', 'alsa', '--display', DISPLAY_NUMBER, v1]
-    i += 1
+    i -= 1
     print('command : ', cmd)
     myprocess = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
@@ -45,7 +45,9 @@ def play_new(unused_addr, v1):
     cmd = ['omxplayer', '--no-osd', '--layer', str(i), '--loop', '-b', '-o',
            'alsa', '--display', DISPLAY_NUMBER, play_list[c]]
     c += 1
-    i += 1
+    i -= 1
+    if i >= 0:
+        i = 9999
     if c >= 5:
         c = 0
     print('command : ', cmd)
