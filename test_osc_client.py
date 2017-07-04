@@ -13,5 +13,6 @@ from pythonosc import udp_client
 
 if __name__ == "__main__":
 
-    client = udp_client.SimpleUDPClient("192.168.1.243", 4001)
-    client.send_message("/d", "../../small.mp4")
+    client = udp_client.SimpleUDPClient("192.168.1.243", 4002)
+    # client.send_message("/d", "../../small.mp4")
+    client.send_message("/d", "resources/emotions/test_effect_01.mp4")

@@ -68,8 +68,8 @@ def speech_input():
 
 
 client = [0]
-client.append(udp_client.SimpleUDPClient("192.168.1.244", 5001))
-client.append(udp_client.SimpleUDPClient("192.168.1.244", 5002))
+client.append(udp_client.SimpleUDPClient("192.168.1.243", 4001))
+client.append(udp_client.SimpleUDPClient("192.168.1.243", 4002))
 
 
 def apiai_do(request, text):
@@ -111,13 +111,10 @@ def apiai_do(request, text):
                 client[display_number[1]].send_message("/q", 1)
         if v_action == 'เล่นวิดีโอใหม่':
             if len(display_number) == 1:
-                client[display_number[0]].send_message("/q", 1)
-                client[display_number[0]].send_message("/d", '../../small.mp4')
+                client[display_number[0]].send_message("/n", '../../small.mp4')
             elif len(display_number) == 2:
-                client[display_number[0]].send_message("/q", 1)
-                client[display_number[1]].send_message("/q", 1)
-                client[display_number[0]].send_message("/d", '../../small.mp4')
-                client[display_number[1]].send_message("/d", '../../small.mp4')
+                client[display_number[0]].send_message("/n", '../../small.mp4')
+                client[display_number[1]].send_message("/n", '../../small.mp4')
 
     if action == 'sound-motion':
         dreg1 = []
