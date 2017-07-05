@@ -3,22 +3,35 @@ import time
 import wave
 
 import pyaudio
-import pygame
-import vlc
+from gtts import gTTS
+import pyglet
 import snowboydecoder
+
+
 # from omxplayer import OMXPlayer
 
 class Robot:
     def __init__(self):
         print("New Robot")
-        # self.screen = pygame.display.set_mode((800, 480))
-        # self.vlc = vlc.Instance("--no-xlib")
-        # self.player = self.vlc.media_player_new()
-        # self.player.set_xwindow(pygame.display.get_wm_info()["window"])
         self.emotion_thread = threading.Thread()
-        self.audio = pyaudio.PyAudio()
-        # pygame.display.toggle_fullscreen()
+        print("++++++++++++++++++++++++++++++++++++")
 
+    def _play_audio(self, fname="resources/sounds/ding.wav"):
+        # audio = pyaudio.PyAudio()
+        pass
+        # ding_wav = wave.open(fname, 'rb')
+        # ding_data = ding_wav.readframes(ding_wav.getnframes())
+        # stream_out = audio.open(
+        #     format=audio.get_format_from_width(ding_wav.getsampwidth()),
+        #     channels=ding_wav.getnchannels(),
+        #     rate=ding_wav.getframerate(), input=False, output=True)
+        # stream_out.start_stream()
+        # stream_out.write(ding_data)
+        # time.sleep(0.2)
+        # stream_out.stop_stream()
+        # stream_out.close()
+        # audio.terminate()
+    
     def _emotion(self, fname):
         pass
         # print(fname)
@@ -40,23 +53,43 @@ class Robot:
         self.emotion_thread = threading.Thread(target=self._emotion, args=(fname,))
         self.emotion_thread.start()
 
-    def _play_audio(self, fname):
-        ding_wav = wave.open(fname, 'rb')
-        ding_data = ding_wav.readframes(ding_wav.getnframes())
-        # audio = pyaudio.PyAudio()
-        stream_out = self.audio.open(
-            format=self.audio.get_format_from_width(ding_wav.getsampwidth()),
-            channels=ding_wav.getnchannels(),
-            rate=ding_wav.getframerate(), input=False, output=True)
-        stream_out.start_stream()
-        stream_out.write(ding_data)
-        time.sleep(0.2)
-        stream_out.stop_stream()
-        stream_out.close()
-        # audio.terminate()
-
+    
     def speak(self, text):
         print("Speak:", text)
+        tts = gTTS(text=text, lang="th", slow=False)
+        path = "resources/sounds/gtts/"+text+".mp3"
+        tts.save(path)
+        music = pyglet.media.load(path)
+        music.play()
+        # pyglet.app.run()
+        # self._play_audio(path)
+        # self._play_audio()
+
+    def _hdmi(self, fname):
+        print("Play video "+fname+" at HDMI")
+    
+    def _dsi(self, fname):
+        print("Play video "+fname+" at DSI")
+
+    
+
+    def start_detect(self, callback=[]):
+        print("Start detect")
+        # self.detector_thread = threading.Thread(target=self.detector.start, args=(callback,lambda: False,0.03))
+        self.detector = snowboydecoder.HotwordDetector(["resources/hotword_models/BitBot.pmdl"], sensitivity=0.5)
+        self.detector.start(detected_callback=callback)
+        # self.detector.start()
+
+
+    def checkHotword(self, fwave, fmodel="resources/hotword_models/BitBot.pmdl"):
+        f = wave.open(fwave)
+        # assert f.getnchannels() == 1,"Error: supports 1 channel only"
+        # assert f.getframerate() == 16000, "Error: supports 16K rate only"
+        # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
+        data = f.readframes(f.getnframes())
+        f.close()
+        detection = snowboydecoder.HotwordDetector(fmodel, sensitivity=0.5)
+        return detection.detector.RunDetection(data) 
 
     # def play_wav(self, fname, wait=True):
 
@@ -80,9 +113,47 @@ class Robot:
     #     else:
     #         play()
 
- 
 bitbot = Robot()
-bitbot._play_audio("resources/ding2.wav")
+# bitbot.speak("resources/ding2.wav")
+# print(bitbot.checkHotword("resources/t.wav"))
+# print(bitbot.checkHotword("resources/t2.wav"))
+# print(bitbot.checkHotword("resources/t3.wav"))
+
+def func():
+    bitbot.speak("สวัสดีครับ")
+    print("ok")
+    bitbot.speak("ได้ยินไหมครับ")
+    print("ok2")
+
+models = ["resources/hotwords"]
+callbacks = [func]
+
+# func()
+
+player = pyglet.media.Player()
+window = pyglet.window.Window()
+source = pyglet.media.StreamingSource()
+video = pyglet.media.load("resources/emotions/A-1.mp4")
+player.queue(video)
+# video.play()
+player.play()
+
+@window.event
+def on_draw():
+    window.clear()
+    if player.source and player.source.video_format:
+        player.get_texture().blit(0,0)
+
+pyglet.app.run()
+time.sleep(10)
+# time.sleep(10)
+# bitbot.start_detect()
+# bitbot.stop_detect()
+
+# bitbot.start_detect([bitbot.speak("Hello World")])
+# while True:
+#     print("hi")
+#     time.sleep(1)
 
 # def main():
 #     bitbot = Robot()

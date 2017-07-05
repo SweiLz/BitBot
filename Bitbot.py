@@ -9,7 +9,7 @@ def bitbot():
     print("Conversation Started")
     # snowboydecoder.play_audio_file()
     snowboydecoder.bot_speak("None", "resources/ding.wav")
-    snowboydecoder.main()
+    # snowboydecoder.main()
     print("Conversation Stop")
     print("Listening")
     global detector

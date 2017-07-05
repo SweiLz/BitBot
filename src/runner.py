@@ -1,16 +1,26 @@
-# from bitbot import *
+# !/usr/bin/python
+import snowboydecoder
 
-# bb = Robot()
-# for i in range(4):
-#     bb.emotion("A-"+str(i+1),True)
-#     time.sleep(1)
-from omxplayer import OMXPlayer
-import time
+models = ["resources/BitBot.pmdl"]
 
-player = OMXPlayer("resources/emotions/A-1.mp4")
-player.play()
 
-time.sleep(5)
-player.pause()
-# player.
-player.quit()
+def bitbot():
+    detector.terminate()
+    print("Conversation Started")
+    # snowboydecoder.play_audio_file()
+    # snowboydecoder.bot_speak("None", "resources/ding.wav")
+    # snowboydecoder.main()
+    print("Conversation Stop")
+    print("Listening")
+    global detector
+    detector = snowboydecoder.HotwordDetector(models, sensitivity=0.5)
+    detector.start(callbacks)
+
+
+callbacks = [bitbot]
+
+
+detector = snowboydecoder.HotwordDetector(models, sensitivity=0.5)
+print("Listening")
+detector.start(detected_callback=callbacks)
+# detector.terminate()
