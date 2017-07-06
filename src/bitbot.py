@@ -134,10 +134,6 @@ class Robot:
 # bitbot.hdmi_close()
 
 
-
-
-# print(bitbot.checkHotword("resources/t.wav"))
-# print(bitbot.checkHotword("resources/t2.wav"))
 # print(bitbot.checkHotword("resources/t3.wav"))
 # def main():
 #     bitbot = Robot()

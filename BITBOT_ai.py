@@ -94,7 +94,7 @@ def apiai_do(request, text):
         bot_speak(response['result']['fulfillment']['speech'], wait=wait_state)
     except:
         print("apiai speech fail.")
-    if action == 'Video':
+    if action == 'เล่นวิดีโอบนหน้าจอ':
         display_number = response['result']['parameters']['Number']  # list
         v_action = response['result']['parameters']['Video-Command']
         if v_action == 'เล่น':
@@ -153,12 +153,12 @@ def apiai_do(request, text):
             while play:
                 x = main()
                 print('x :: ', x)
-                while x == 'i':
+                while x == 'ฉันเริ่มเล่นก่อน':
                     n = main()
                     if type(n) == list:
                         x = n
 
-                if x == 'you':
+                if x == 'บอทเริ่มเล่นก่อน':
                     counter += 1
                     bot_speak(str(counter))
                 if type(x) == list:
@@ -189,12 +189,10 @@ def apiai_do(request, text):
                             bot_speak('ฉันชนะแล้ว คุณอ่อนด้อย')
                             play = False
 
-    if action == '21':
+    if action == 'กำลังเล่นเกม21':
         return list(response['result']['parameters']['number'])
-    if action == 'I-first':
-        return 'i'
-    if action == 'You-first':
-        return 'you'
+    if action in ['ฉันเริ่มเล่นก่อน', 'บอทเริ่มเล่นก่อน']:
+        return action
 
 
 def main():
