@@ -14,17 +14,21 @@ import snowboydecoder
 
 class Robot:
     def __init__(self):
-        print("New Robot")
+        print("++++++++++++++++++++++++++++++++++++")
+        print("Bitbot, Hello World!")
+        print("++++++++++++++++++++++++++++++++++++")
+        self.speaker = None
         self.audio_player = None
         self.dis_layer = [1000, 1000]
         self.dis_player = [[None, None], [None, None]]
-        print("++++++++++++++++++++++++++++++++++++")
 
     def __del__(self):
         try:
-            os.system("sudo killall -s 9 omxplayer.bin")
+            # pass
+            os.system("killall -s 9 omxplayer.bin > /dev/null 2>&1")
         except Exception:
             pass
+        print("++++++++++++++++++++++++++++++++++++")
 
     def _create_task(self, cmd):
         return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True, preexec_fn=os.setsid)
@@ -36,17 +40,15 @@ class Robot:
             pass
 
     def _audio(self, fname, terminate=False, wait=False):
-        print("Play audio " + fname)
         ENDPOINT = "resources/" + fname
-        # cmd = ['omxplayer', ENDPOINT, '-o', 'local']
-        cmd = ['vlc', ENDPOINT, '--play-and-exit']
+        cmd = ['omxplayer', ENDPOINT, '-o', 'local']
         if terminate:
             self._terminate_task(self.audio_player.pid)
-        self.audio_player = self._create_task(cmd)
+        self.audio_player = self._create_task(cmd=cmd)
         if wait:
             self.audio_player.wait()
 
-    def _display(self, num, fname, sound, wait):
+    def _display(self, num, fname, sound=False, wait=False):
         ENDPOINT = "resources/" + fname
         cmd = ['omxplayer', ENDPOINT, '-b', '--layer',
                str(self.dis_layer[num]), '--display']
@@ -56,7 +58,7 @@ class Robot:
         self.dis_layer[num] -= 1
         if self.dis_layer[num] < 0:
             self.dis_layer[num] = 1000
-        self.dis_player[num][dis] = self._create_task(cmd)
+        self.dis_player[num][dis] = self._create_task(cmd=cmd)
         if self.dis_player[num][1 - dis] != None:
             threading.Timer(0.5, self._terminate_task, args=(
                 self.dis_player[num][1 - dis].pid,)).start()
@@ -77,8 +79,9 @@ class Robot:
 
     def hdmi_close(self):
         print("Close HDMI")
-        dis = self.dis_layer[1] % 2
-        self._terminate_task(self.dis_player[1][dis].pid)
+        if self.dis_player[1][1] != None:
+            self._terminate_task(self.dis_player[1][1].pid)
+        self._terminate_task(self.dis_player[1][0].pid)
 
     def dsi_open(self, fname, sound=False, wait=False):
         print("Play video " + fname + " at DSI")
@@ -86,18 +89,25 @@ class Robot:
 
     def dsi_close(self):
         print("Close DSI")
-        dis = self.dis_layer[0] % 2
-        self._terminate_task(self.dis_player[0][dis].pid)
+        if self.dis_player[0][1] != None:
+            self._terminate_task(self.dis_player[0][1].pid)
+        self._terminate_task(self.dis_player[0][0].pid)
 
     def speak(self, text, wait=False):
         print("Speak:", text)
-        path = "resources/sounds/gtts/" + text + ".mp3"
-        if path in glob.glob("resources/sounds/gtts/*.mp3"):
-            self._audio("sounds/gtts/" + text + ".mp3", wait=wait)
-        else:
-            tts = gTTS(text=text, lang="th")
-            tts.save(path)
-            self._audio("sounds/gtts/" + text + ".mp3", wait=wait)
+        cmd = ['google_speech', '-l', 'th', text]
+        cmd += ['--sox-effects']
+        cmd += ['pitch', '350']
+        cmd += ['stretch', '2', '133.33']
+        cmd += ['lin', '0.2', '0.4']
+        cmd += ['overdrive', '25', '25']
+        cmd += ['echo', '0.4', '0.8', '15', '0.8']
+        cmd += ['synth', 'sine', 'fmod', '30']
+        cmd += ['speed', '3']
+        self.speaker = self._create_task(cmd=cmd)
+        if wait:
+            self.speaker.wait()
+
 
     # def start_detect(self, callback=[]):
     #     print("Start detect")
