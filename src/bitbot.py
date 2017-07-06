@@ -16,15 +16,16 @@ class Robot:
     def __init__(self):
         print("++++++++++++++++++++++++++++++++++++")
         print("Bitbot, Hello World!")
+        print("++++++++++++++++++++++++++++++++++++")
+        self.speaker = None
         self.audio_player = None
         self.dis_layer = [1000, 1000]
         self.dis_player = [[None, None], [None, None]]
-        print("++++++++++++++++++++++++++++++++++++")
 
     def __del__(self):
         try:
             # pass
-            os.system("sudo killall -s 9 omxplayer.bin")
+            os.system("killall -s 9 omxplayer.bin > /dev/null 2>&1")
         except Exception:
             pass
         print("++++++++++++++++++++++++++++++++++++")
@@ -41,10 +42,9 @@ class Robot:
     def _audio(self, fname, terminate=False, wait=False):
         ENDPOINT = "resources/" + fname
         cmd = ['omxplayer', ENDPOINT, '-o', 'local']
-        # cmd = ['vlc', ENDPOINT, '--play-and-exit', '-Idummy']
         if terminate:
             self._terminate_task(self.audio_player.pid)
-        self.audio_player = self._create_task(cmd)
+        self.audio_player = self._create_task(cmd=cmd)
         if wait:
             self.audio_player.wait()
 
@@ -58,7 +58,7 @@ class Robot:
         self.dis_layer[num] -= 1
         if self.dis_layer[num] < 0:
             self.dis_layer[num] = 1000
-        self.dis_player[num][dis] = self._create_task(cmd)
+        self.dis_player[num][dis] = self._create_task(cmd=cmd)
         if self.dis_player[num][1 - dis] != None:
             threading.Timer(0.5, self._terminate_task, args=(
                 self.dis_player[num][1 - dis].pid,)).start()
@@ -95,13 +95,19 @@ class Robot:
 
     def speak(self, text, wait=False):
         print("Speak:", text)
-        path = "resources/sounds/gtts/" + text
-        if path not in glob.glob("resources/sounds/gtts/*.wav"):
-            tts = gTTS(text=text, lang="th")
-            tts.save(path + ".mp3")
-            os.system("sox \""+ path +".mp3\" \""+ path +".wav\"")
-            os.system("rm \""+path+".mp3\"")
-        self._audio("sounds/gtts/" + text + ".wav", wait=wait)
+        cmd = ['google_speech', '-l', 'th', text]
+        cmd += ['--sox-effects']
+        cmd += ['pitch', '350']
+        cmd += ['stretch', '2', '133.33']
+        cmd += ['lin', '0.2', '0.4']
+        cmd += ['overdrive', '25', '25']
+        cmd += ['echo', '0.4', '0.8', '15', '0.8']
+        cmd += ['synth', 'sine', 'fmod', '30']
+        cmd += ['speed', '3']
+        self.speaker = self._create_task(cmd=cmd)
+        if wait:
+            self.speaker.wait()
+
 
     # def start_detect(self, callback=[]):
     #     print("Start detect")
