@@ -1,8 +1,8 @@
 from bitbot import Robot
 import json
-import speech_recognition as speech_recognition
+import speech_recognition as sr
 from googletrans import Translator
-from count 21 import *
+from count21 import *
 import apiai
 CLIENT_ACCESS_TOKEN = '29234bbc7c0c4467ab38edd3ebb6c4f3'
 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
@@ -21,6 +21,8 @@ def speech_input():
     with sr.Microphone() as source:
         audio = r.listen(source, phrase_time_limit=6)
         print('**')
+        bb.audio_open("ding2.wav")
+        bb.audio_open("ding2.wav")
     try:
         text_th = r.recognize_google(audio, language="th-TH")
         text_eng = translator.translate(text_th, dest='en').text
@@ -60,9 +62,11 @@ def apiai_do(request, text):
         num_videolist = response['result']['parameters']['Number']  # list
         v_action = response['result']['parameters']['Video-Command']
         if v_action == 'เล่น':
-            bb.hdmi_open('/emotions/A-{}.mp4'.format(num_videolist))
+            print('emotions/A-{}.mp4'.format(num_videolist))
+            bb.dsi_open('emotions/A-{}.mp4'.format(num_videolist), sound=True)
         if v_action == 'หยุดเล่น':
-            bb.hdmi_close()
+            print('หยุดเล่นวิดีโอ')
+            bb.dsi_close()
 
     if action == 'sound-motion':
         dreg1 = []
