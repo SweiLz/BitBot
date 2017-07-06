@@ -8,7 +8,6 @@ import wave
 
 import pyaudio
 from gtts import gTTS
-from omxplayer import OMXPlayer
 
 import snowboydecoder
 
@@ -26,19 +25,6 @@ class Robot:
             os.system("sudo killall -s 9 omxplayer.bin")
         except Exception:
             pass
-
-    def speak(self, text, wait=False):
-        print("Speak:", text)
-        path = "resources/sounds/gtts/"+text+".mp3"
-        if path in glob.glob("resources/sounds/gtts/*.mp3"):
-            print("ok")
-            self._audio("sounds/gtts/"+text+".mp3", wait=wait)
-        else:
-            print("new")
-            tts = gTTS(text=text, lang="th")
-            tts.save(path)
-            self._audio("sounds/gtts/"+text+".mp3", wait=wait)
-
 
     def _create_task(self, cmd):
         return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True, preexec_fn=os.setsid)
@@ -66,7 +52,7 @@ class Robot:
                str(self.dis_layer[num]), '--display']
         cmd += ['5'] if num else ['0']
         cmd += ['-o', 'local'] if sound else ['-n', '-1']
-        dis = self.dis_layer[num] % 3
+        dis = self.dis_layer[num] % 2
         self.dis_layer[num] -= 1
         if self.dis_layer[num] < 0:
             self.dis_layer[num] = 1000
@@ -77,53 +63,73 @@ class Robot:
         if wait:
             self.dis_player[num][dis].wait()
 
-    def hdmi(self, fname, sound=False, wait=False):
+    def audio_open(self, fname, terminate=False, wait=False):
+        print("Play audio " + fname)
+        self._audio(fname, terminate=terminate, wait=wait)
+
+    def audio_close(self):
+        print("Close audio")
+        self._terminate_task(self.audio_player.pid)
+
+    def hdmi_open(self, fname, sound=False, wait=False):
         print("Play video " + fname + " at HDMI")
         self._display(1, fname, sound, wait)
 
-    def dsi(self, fname, sound=False, wait=False):
+    def hdmi_close(self):
+        print("Close HDMI")
+        dis = self.dis_layer[1] % 2
+        self._terminate_task(self.dis_player[1][dis].pid)
+
+    def dsi_open(self, fname, sound=False, wait=False):
         print("Play video " + fname + " at DSI")
         self._display(0, fname, sound, wait)
 
-    def start_detect(self, callback=[]):
-        print("Start detect")
-        # self.detector_thread = threading.Thread(target=self.detector.start, args=(callback,lambda: False,0.03))
-        self.detector = snowboydecoder.HotwordDetector(
-            ["resources/hotword_models/BitBot.pmdl"], sensitivity=0.5)
-        self.detector.start(detected_callback=callback)
-        # self.detector.start()
+    def dsi_close(self):
+        print("Close DSI")
+        dis = self.dis_layer[0] % 2
+        self._terminate_task(self.dis_player[0][dis].pid)
 
-    def checkHotword(self, fwave, fmodel="resources/hotword_models/BitBot.pmdl"):
-        f = wave.open(fwave)
-        # assert f.getnchannels() == 1,"Error: supports 1 channel only"
-        # assert f.getframerate() == 16000, "Error: supports 16K rate only"
-        # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
-        data = f.readframes(f.getnframes())
-        f.close()
-        detection = snowboydecoder.HotwordDetector(fmodel, sensitivity=0.5)
-        return detection.detector.RunDetection(data)
+    def speak(self, text, wait=False):
+        print("Speak:", text)
+        path = "resources/sounds/gtts/" + text + ".mp3"
+        if path in glob.glob("resources/sounds/gtts/*.mp3"):
+            self._audio("sounds/gtts/" + text + ".mp3", wait=wait)
+        else:
+            tts = gTTS(text=text, lang="th")
+            tts.save(path)
+            self._audio("sounds/gtts/" + text + ".mp3", wait=wait)
 
+    # def start_detect(self, callback=[]):
+    #     print("Start detect")
+    #     # self.detector_thread = threading.Thread(target=self.detector.start, args=(callback,lambda: False,0.03))
+    #     self.detector = snowboydecoder.HotwordDetector(
+    #         ["resources/hotword_models/BitBot.pmdl"], sensitivity=0.5)
+    #     self.detector.start(detected_callback=callback)
+    #     # self.detector.start()
 
-bitbot = Robot()
+    # def checkHotword(self, fwave, fmodel="resources/hotword_models/BitBot.pmdl"):
+    #     f = wave.open(fwave)
+    #     # assert f.getnchannels() == 1,"Error: supports 1 channel only"
+    #     # assert f.getframerate() == 16000, "Error: supports 16K rate only"
+    #     # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
+    #     data = f.readframes(f.getnframes())
+    #     f.close()
+    #     detection = snowboydecoder.HotwordDetector(fmodel, sensitivity=0.5)
+    #     return detection.detector.RunDetection(data)
+# def hello():
+#     print("Hello")
+
+# bitbot.recv("127.0.0.1",5000,hello)
+
+# bitbot = Robot()
 # bitbot._audio("sounds/piano.wav")
-bitbot.speak("สวัสดีทุกท่าน", wait=True)
+# bitbot.speak("บิทบอทก็ไม่รู้เหมือนกัน", wait=True)
 # time.sleep(5)
+# bitbot.hdmi_open("pirate.mp4")
+# time.sleep(5)
+# bitbot.hdmi_close()
 
-# for i in range(3):
-#     # print("END1")
-#     # bitbot._audio("ding.wav",wait=True)
-#     # print("END2")
-#     # bitbot._dsi("pirate.mp4")
-#     # bitbot._hdmi("pirate.mp4")
-#     # time.sleep(2)
-#     # bitbot._dsi("emotions/A-1.mp4")
-#     # time.sleep(1)
-#     # bitbot._audio("ding.wav")
-#     # bitbot._dsi("emotions/A-1.mp4", sound=True)
-#     bitbot._hdmi("emotions/A-3.mp4", wait=True)
-#     # time.sleep(2)
-#     bitbot._hdmi("emotions/A-2.mp4")
-#     time.sleep(1)
+
 
 
 # print(bitbot.checkHotword("resources/t.wav"))
