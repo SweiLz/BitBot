@@ -1,13 +1,9 @@
-import glob
 import os
 import signal
-import subprocess
 import threading
 import time
 import wave
-
-import pyaudio
-from gtts import gTTS
+from subprocess import PIPE, Popen
 
 import snowboydecoder
 
@@ -21,6 +17,7 @@ class Robot:
         self.audio_player = None
         self.dis_layer = [1000, 1000]
         self.dis_player = [[None, None], [None, None]]
+        self.detector = [None, None]
 
     def __del__(self):
         try:
@@ -31,7 +28,7 @@ class Robot:
         print("++++++++++++++++++++++++++++++++++++")
 
     def _create_task(self, cmd):
-        return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True, preexec_fn=os.setsid)
+        return Popen(cmd, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
 
     def _terminate_task(self, pid):
         try:
@@ -48,6 +45,14 @@ class Robot:
         if wait:
             self.audio_player.wait()
 
+    def audio_open(self, fname, terminate=False, wait=False):
+        print("Play audio " + fname)
+        self._audio(fname, terminate=terminate, wait=wait)
+
+    def audio_close(self):
+        print("Close audio")
+        self._terminate_task(self.audio_player.pid)
+
     def _display(self, num, fname, sound=False, wait=False):
         ENDPOINT = "resources/" + fname
         cmd = ['omxplayer', ENDPOINT, '-b', '--layer',
@@ -60,19 +65,10 @@ class Robot:
             self.dis_layer[num] = 1000
         self.dis_player[num][dis] = self._create_task(cmd=cmd)
         if self.dis_player[num][1 - dis] != None:
-            threading.Timer(0.5, self._terminate_task, args=(
-                self.dis_player[num][1 - dis].pid,)).start()
+            threading.Timer(0.5, self._terminate_task, args=(self.dis_player[num][1 - dis].pid,)).start()
         if wait:
             self.dis_player[num][dis].wait()
-
-    def audio_open(self, fname, terminate=False, wait=False):
-        print("Play audio " + fname)
-        self._audio(fname, terminate=terminate, wait=wait)
-
-    def audio_close(self):
-        print("Close audio")
-        self._terminate_task(self.audio_player.pid)
-
+    
     def hdmi_open(self, fname, sound=False, wait=False):
         print("Play video " + fname + " at HDMI")
         self._display(1, fname, sound, wait)
@@ -108,56 +104,55 @@ class Robot:
         if wait:
             self.speaker.wait()
 
+    def _detector(self, models_list, callback_list, sensitive_list):
+        self.detector[0] = snowboydecoder.HotwordDetector(models_list, sensitivity=sensitive_list)
+        self.detector[0].start(detected_callback=callback_list)
 
-    # def start_detect(self, callback=[]):
-    #     print("Start detect")
-    #     # self.detector_thread = threading.Thread(target=self.detector.start, args=(callback,lambda: False,0.03))
-    #     self.detector = snowboydecoder.HotwordDetector(
-    #         ["resources/hotword_models/BitBot.pmdl"], sensitivity=0.5)
-    #     self.detector.start(detected_callback=callback)
-    #     # self.detector.start()
+    def detector_start(self, models, callbacks, sensitives):
+        print("Start hotword detection")
+        self.detector[1] = threading.Thread(target=self._detector, args=(models, callbacks, sensitives,))
+        self.detector[1].start()
 
-    # def checkHotword(self, fwave, fmodel="resources/hotword_models/BitBot.pmdl"):
-    #     f = wave.open(fwave)
-    #     # assert f.getnchannels() == 1,"Error: supports 1 channel only"
-    #     # assert f.getframerate() == 16000, "Error: supports 16K rate only"
-    #     # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
-    #     data = f.readframes(f.getnframes())
-    #     f.close()
-    #     detection = snowboydecoder.HotwordDetector(fmodel, sensitivity=0.5)
-    #     return detection.detector.RunDetection(data)
-# def hello():
-#     print("Hello")
+    def detector_stop(self):
+        print("Stop hotword detection")
+        self.detector[0].terminate()
+        self.detector[1].join(0)
 
-# bitbot.recv("127.0.0.1",5000,hello)
+    def detector_wav(self, fwave, fmodel):
+        f = wave.open(fwave)
+        # assert f.getnchannels() == 1,"Error: supports 1 channel only"
+        # assert f.getframerate() == 16000, "Error: supports 16K rate only"
+        # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
+        data = f.readframes(f.getnframes())
+        f.close()
+        return snowboydecoder.HotwordDetector(fmodel).detector.RunDetection(data)
+
+
+
+# def voicetick():
+#     print("Hello World!")
+
+# def voicetick2():
+#     print("Hello World2!")
+
+# model = ["resources/hotwords/BitBot.pmdl", "resources/hotwords/snowboy.umdl"]
+# sensitive = [0.5, 0.7]
+# callback = [voicetick, voicetick2]
 
 # bitbot = Robot()
-# bitbot._audio("sounds/piano.wav")
-# bitbot.speak("บิทบอทก็ไม่รู้เหมือนกัน", wait=True)
-# time.sleep(5)
-# bitbot.hdmi_open("pirate.mp4")
-# time.sleep(5)
-# bitbot.hdmi_close()
+# # bitbot.detector_start(model, callback, sensitive)
+# print(bitbot.detector_wav("resources/snowboy.wav", model[0]))
+# print(bitbot.detector_wav("resources/snowboy.wav", model[1]))
 
+# # for i in range(10):
+# #     print("In loop")
+# #     time.sleep(1)
+# # print("After loop")
+# # bitbot.detector_stop()
 
-# print(bitbot.checkHotword("resources/t3.wav"))
-# def main():
-#     bitbot = Robot()
-#     for i in range(4):
+# # for i in range(10):
+# #     print("In loop2")
+# #     time.sleep(1)
+# # print("After loop2")
 
-#         bitbot.emotion("A-"+str(i+1))
-#         time.sleep(1)
-#     # bitbot.emotion("A-4")
-#     # time.sleep(1)
-#     # bitbot.emotion("A-3")
-#     # while True:
-#         # pass
-#     # bitbot.speak("น้อบรับคำสั่ง")
-#     # bitbot.play_wav("resources/sounds/accept.wav",False)
-#     # bitbot.speak("เล่นแล้ว")
-#     # time.sleep(0.25)
-#     # bitbot.play_wav("resources/sounds/accept.wav",False)
-#     # bitbot.speak("เล่นครั้งที่ 2")
-
-# if __name__ == '__main__':
-#     main()
+# # bitbot.recv("127.0.0.1",5000,hello)
