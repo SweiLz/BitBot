@@ -18,23 +18,28 @@ bb = Robot()
 def speech_input():
     print('[]')
     bb.audio_open("ding2.wav")
-    with sr.Microphone() as source:
-        audio = r.listen(source, phrase_time_limit=6)
-        print('**')
-        bb.audio_open("ding2.wav")
-        bb.audio_open("ding2.wav")
-    try:
-        text_th = r.recognize_google(audio, language="th-TH")
-        text_eng = translator.translate(text_th, dest='en').text
-        print(text_th, '|', text_eng)
-        return text_th, text_eng
+    text_th = bb.listen()
+    bb.audio_open("ding3.wav")
+    if text_th == 0:
+        return 0, 0
+    text_en = translator.translate(text_th, dest='en').text
+    return text_th,text_en
+    # with sr.Microphone() as source:
+    #     audio = r.listen(source, phrase_time_limit=6)
+    #     print('**')
+    #     bb.audio_open("ding3.wav")
+    # try:
+    #     text_th = r.recognize_google(audio, language="th-TH")
+    #     text_eng = translator.translate(text_th, dest='en').text
+    #     print(text_th, '|', text_eng)
+    #     return text_th, text_eng
 
-    except sr.UnknownValueError:
-        print("unknown speech_input!")
-        return 0, 0
-    except sr.RequestError as e:
-        print("Not in service ")
-        return 0, 0
+    # except sr.UnknownValueError:
+    #     print("unknown speech_input!")
+    #     return 0, 0
+    # except sr.RequestError as e:
+    #     print("Not in service ")
+    #     return 0, 0
 
 
 def apiai_do(request, text):
@@ -50,15 +55,9 @@ def apiai_do(request, text):
             return 0
     except:
         print("apiai action fail.")
-    try:
-        print(response['result']['fulfillment']['speech'])
-        wait_state = False
-        if action != 'play-game':
-            wait_state = True
-        bb.speak(response['result']['fulfillment']['speech'], wait=wait_state)
-    except:
-        print("apiai speech fail.")
-    if action == 'เล่นวิดีโอ':
+    if action == 'ทำลายตัวเอง':
+        bb.dsi_open('emotions/A-1.mp4', sound=True)
+    if action == 'เล่นวิดีโอตามหมายเลข':
         num_videolist = response['result']['parameters']['Number']  # list
         v_action = response['result']['parameters']['Video-Command']
         if v_action == 'เล่น':
@@ -145,6 +144,14 @@ def apiai_do(request, text):
         return list(response['result']['parameters']['number'])
     if action in ['ฉันเริ่มเล่นก่อน', 'บอทเริ่มเล่นก่อน']:
         return action
+    try:
+        print(response['result']['fulfillment']['speech'])
+        wait_state = False
+        if action == 'play-game':
+            wait_state = True
+        bb.speak(response['result']['fulfillment']['speech'], wait=wait_state)
+    except:
+        print("apiai speech fail.")
 
 
 def main():

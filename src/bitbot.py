@@ -1,11 +1,13 @@
 import os
 import signal
 import threading
-import time
-import wave
+# import time
+# import wave
 from subprocess import PIPE, Popen
 
-import snowboydecoder
+import speech_recognition as sr
+
+# import snowboydecoder
 
 
 class Robot:
@@ -17,18 +19,18 @@ class Robot:
         self.audio_player = None
         self.dis_layer = [1000, 1000]
         self.dis_player = [[None, None], [None, None]]
-        self.detector = [None, None]
+        # self.detector = [None, None]
 
     def __del__(self):
         try:
             # pass
-            os.system("killall -s 9 omxplayer.bin > /dev/null 2>&1")
+            os.system("killall -s 9 omxplayer.bin")
         except Exception:
             pass
         print("++++++++++++++++++++++++++++++++++++")
 
     def _create_task(self, cmd):
-        return Popen(cmd, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
+        return Popen(cmd,stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
 
     def _terminate_task(self, pid):
         try:
@@ -53,25 +55,29 @@ class Robot:
         print("Close audio")
         self._terminate_task(self.audio_player.pid)
 
-    def _display(self, num, fname, sound=False, wait=False):
+    def _display(self, num, fname, sound=False, wait=False, loop=False):
         ENDPOINT = "resources/" + fname
-        cmd = ['omxplayer', ENDPOINT, '-b', '--layer',
+        cmd = ['omxplayer', ENDPOINT, '-b', '--no-osd', '--layer',
                str(self.dis_layer[num]), '--display']
         cmd += ['5'] if num else ['0']
         cmd += ['-o', 'local'] if sound else ['-n', '-1']
+        if loop:
+            cmd += ['--loop']
+        if num==0:
+            cmd += ['--win', "\"0 0 799 479\""]
         dis = self.dis_layer[num] % 2
         self.dis_layer[num] -= 1
         if self.dis_layer[num] < 0:
             self.dis_layer[num] = 1000
         self.dis_player[num][dis] = self._create_task(cmd=cmd)
         if self.dis_player[num][1 - dis] != None:
-            threading.Timer(0.5, self._terminate_task, args=(self.dis_player[num][1 - dis].pid,)).start()
+            threading.Timer(0.7, self._terminate_task, args=(self.dis_player[num][1 - dis].pid,)).start()
         if wait:
             self.dis_player[num][dis].wait()
     
-    def hdmi_open(self, fname, sound=False, wait=False):
+    def hdmi_open(self, fname, sound=False, wait=False, loop=False):
         print("Play video " + fname + " at HDMI")
-        self._display(1, fname, sound, wait)
+        self._display(1, fname, sound, wait, loop)
 
     def hdmi_close(self):
         print("Close HDMI")
@@ -79,9 +85,9 @@ class Robot:
             self._terminate_task(self.dis_player[1][1].pid)
         self._terminate_task(self.dis_player[1][0].pid)
 
-    def dsi_open(self, fname, sound=False, wait=False):
+    def dsi_open(self, fname, sound=False, wait=False, loop=False):
         print("Play video " + fname + " at DSI")
-        self._display(0, fname, sound, wait)
+        self._display(0, fname, sound, wait, loop)
 
     def dsi_close(self):
         print("Close DSI")
@@ -89,45 +95,64 @@ class Robot:
             self._terminate_task(self.dis_player[0][1].pid)
         self._terminate_task(self.dis_player[0][0].pid)
 
-    def speak(self, text, wait=False):
+    def speak(self, text, wait=False, process=False):
         print("Speak:", text)
         cmd = ['google_speech', '-l', 'th', text]
         cmd += ['--sox-effects']
-        cmd += ['pitch', '350']
-        cmd += ['stretch', '2', '133.33']
-        cmd += ['lin', '0.2', '0.4']
-        cmd += ['overdrive', '25', '25']
-        cmd += ['echo', '0.4', '0.8', '15', '0.8']
-        cmd += ['synth', 'sine', 'fmod', '30']
-        cmd += ['speed', '3']
+        if process:
+            cmd += ['pitch', '50']
+            cmd += ['stretch', '2.5', '133.33']
+            cmd += ['lin', '0.2', '0.4']
+            cmd += ['overdrive', '25', '25']
+            cmd += ['echo', '0.4', '0.8', '15', '0.8']
+            cmd += ['synth', 'sine', 'fmod', '30']
+        cmd += ['speed', '1.3']
         self.speaker = self._create_task(cmd=cmd)
         if wait:
             self.speaker.wait()
 
-    def _detector(self, models_list, callback_list, sensitive_list):
-        self.detector[0] = snowboydecoder.HotwordDetector(models_list, sensitivity=sensitive_list)
-        self.detector[0].start(detected_callback=callback_list)
+    ############################### Snowboy Detector ######################
+    # def _detector(self, models_list, callback_list, sensitive_list):
+    #     self.detector[0] = snowboydecoder.HotwordDetector(models_list, sensitivity=sensitive_list)
+    #     self.detector[0].start(detected_callback=callback_list)
 
-    def detector_start(self, models, callbacks, sensitives):
-        print("Start hotword detection")
-        self.detector[1] = threading.Thread(target=self._detector, args=(models, callbacks, sensitives,))
-        self.detector[1].start()
+    # def detector_start(self, models, callbacks, sensitives):
+    #     print("Start hotword detection")
+    #     self.detector[1] = threading.Thread(target=self._detector, args=(models, callbacks, sensitives,))
+    #     self.detector[1].start()
 
-    def detector_stop(self):
-        print("Stop hotword detection")
-        self.detector[0].terminate()
-        self.detector[1].join(0)
+    # def detector_stop(self):
+    #     print("Stop hotword detection")
+    #     self.detector[0].terminate()
+    #     self.detector[1].join(0)
 
-    def detector_wav(self, fwave, fmodel):
-        f = wave.open(fwave)
-        # assert f.getnchannels() == 1,"Error: supports 1 channel only"
-        # assert f.getframerate() == 16000, "Error: supports 16K rate only"
-        # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
-        data = f.readframes(f.getnframes())
-        f.close()
-        return snowboydecoder.HotwordDetector(fmodel).detector.RunDetection(data)
-
-
+    # def detector_wav(self, fwave, fmodel):
+    #     f = wave.open(fwave)
+    #     # assert f.getnchannels() == 1,"Error: supports 1 channel only"
+    #     # assert f.getframerate() == 16000, "Error: supports 16K rate only"
+    #     # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
+    #     data = f.readframes(f.getnframes())
+    #     f.close()
+    #     return snowboydecoder.HotwordDetector(fmodel).detector.RunDetection(data)
+    ############################### Snowboy Detector ######################
+    
+    def listen(self, timeout=6, lang="th-TH"):
+        print("=== Listening ===")
+        r = sr.Recognizer()
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source)
+            audio = r.listen(source, phrase_time_limit=timeout)
+        try:
+            recog = r.recognize_google(audio, language=lang)
+            print("User:", recog) 
+            return recog
+        except sr.UnknownValueError:
+            print("--- No Sound ---")
+            return 0
+        except sr.RequestError as e:
+            print("--- No Service ---")
+            return 0
+    
 
 # def voicetick():
 #     print("Hello World!")
