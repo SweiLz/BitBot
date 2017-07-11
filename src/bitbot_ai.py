@@ -4,6 +4,7 @@ import speech_recognition as sr
 from googletrans import Translator
 from count21 import *
 import apiai
+from text_analyzer import *
 CLIENT_ACCESS_TOKEN = '29234bbc7c0c4467ab38edd3ebb6c4f3'
 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 translator = Translator(service_urls=['translate.google.co.th',
@@ -21,25 +22,10 @@ def speech_input():
     text_th = bb.listen()
     bb.audio_open("ding3.wav")
     if text_th == 0:
+        bb.speak("ฉันฟังไม่ค่อยออก")
         return 0, 0
     text_en = translator.translate(text_th, dest='en').text
-    return text_th,text_en
-    # with sr.Microphone() as source:
-    #     audio = r.listen(source, phrase_time_limit=6)
-    #     print('**')
-    #     bb.audio_open("ding3.wav")
-    # try:
-    #     text_th = r.recognize_google(audio, language="th-TH")
-    #     text_eng = translator.translate(text_th, dest='en').text
-    #     print(text_th, '|', text_eng)
-    #     return text_th, text_eng
-
-    # except sr.UnknownValueError:
-    #     print("unknown speech_input!")
-    #     return 0, 0
-    # except sr.RequestError as e:
-    #     print("Not in service ")
-    #     return 0, 0
+    return text_th, text_en
 
 
 def apiai_do(request, text):
@@ -50,11 +36,14 @@ def apiai_do(request, text):
         action = response['result']['action']
         print('Action is {}'.format(action))
         print('Parameter is ...')
-        print(response['result']['parameters'])
+        print(response['result']['paameters'])
         if action == 'input.unknown':
+            bb.speak("ฉันไม่เข้าใจ")
             return 0
     except:
+        bb.speak("ฉันทำไม่ได้")
         print("apiai action fail.")
+
     if action == 'ทำลายตัวเอง':
         bb.dsi_open('emotions/A-1.mp4', sound=True)
     if action == 'เล่นวิดีโอตามหมายเลข':

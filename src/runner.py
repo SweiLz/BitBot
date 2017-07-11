@@ -1,16 +1,23 @@
 from bitbot import Robot
+import threading
+import queue
 import time
-import random
+# # import random
 
 BB = Robot()
 
-def main():
-    BB.speak("ว่าไงจ๊ะ", wait=False)
-    recog = BB.listen()
+
+print(BB.info.version)
+print(BB.info.age)
+print(BB.info.name)
+print(BB.info.birthday)
+
+
+# def main():
+#     BB.speak("ว่าไงจ๊ะ", wait=False)
+#     recog = BB.listen()
    
-BB.detector_start(["resources/BitBot.pmdl"],[main],[0.5])
-
-
+# BB.detector_start(["resources/BitBot.pmdl"],[main],[0.5])
 
 
 
@@ -35,12 +42,24 @@ BB.detector_start(["resources/BitBot.pmdl"],[main],[0.5])
 # bitbot.speak("ไม่บอกหรอก", True)
 # time.sleep(0.1)
 
-# emotions = {
-#     "Smile" : ['emotions/bit_bot_emotion_1.mp4', 1.85],
-#     "Line" : ['emotions/bit_bot_emotion_2.mp4', 3.1],
-#     "Angry" : ['emotions/bit_bot_emotion_3.mp4', 4.2]
-# }
+emotions = {
+    "Smile" : ['emotions/bit_bot_emotion_1.mp4', 1.85],
+    "Line" : ['emotions/bit_bot_emotion_2.mp4', 3.1],
+    "Angry" : ['emotions/bit_bot_emotion_3.mp4', 4.2]
+}
 
+
+BB.add_emo(emotions['Line'])
+BB.add_emo(emotions['Angry'])
+BB.add_emo(emotions['Smile'])
+BB.add_emo(emotions['Angry'])
+
+while True:
+    print("Hi")
+    time.sleep(1)
+# print(emo_queue)
+# print(emo_queue.get())
+# print(emo_queue)
 # # for i in range(5):
 # while True:
 #     emo, value = random.choice(list(emotions.items()))
@@ -66,3 +85,32 @@ BB.detector_start(["resources/BitBot.pmdl"],[main],[0.5])
 # print("Hello World {}".format("3"))
 # os.system("sox /input/file.mp3 -e mu-law -r 16k /output/file.wav remix 1,2"]
 # sox resources/sounds/gtts/สวัสดีทุกท่าน.mp3 resources/sounds/gtts/file.wav
+
+
+# def voicetick():
+#     print("Hello World!")
+
+# def voicetick2():
+#     print("Hello World2!")
+
+# model = ["resources/hotwords/BitBot.pmdl", "resources/hotwords/snowboy.umdl"]
+# sensitive = [0.5, 0.7]
+# callback = [voicetick, voicetick2]
+
+# bitbot = Robot()
+# # bitbot.detector_start(model, callback, sensitive)
+# print(bitbot.detector_wav("resources/snowboy.wav", model[0]))
+# print(bitbot.detector_wav("resources/snowboy.wav", model[1]))
+
+# # for i in range(10):
+# #     print("In loop")
+# #     time.sleep(1)
+# # print("After loop")
+# # bitbot.detector_stop()
+
+# # for i in range(10):
+# #     print("In loop2")
+# #     time.sleep(1)
+# # print("After loop2")
+
+# # bitbot.recv("127.0.0.1",5000,hello)
