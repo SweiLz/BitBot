@@ -1,13 +1,23 @@
 import os
 import signal
 import threading
-# import time
+import time
+import queue
 # import wave
 from subprocess import PIPE, Popen
 
 import speech_recognition as sr
+from utils import Personar
 
-# import snowboydecoder
+
+emotions = {
+    "Sad": ['emotions/bitbot_sad.m4v', 2.13],
+    "Swift": ['emotions/bitbot_swift.m4v', 10.67],
+    "Blink": ['emotions/bitbot_blink.m4v', 4.13],
+    "Sleepy": ['emotions/bitbot_sleepy.m4v', 4.53],
+    "Smile": ['emotions/bitbot_smile.m4v', 2.43],
+    "Notification": ['emotions/bitbot_notification.m4v', 11.03]
+}
 
 
 class Robot:
@@ -19,7 +29,10 @@ class Robot:
         self.audio_player = None
         self.dis_layer = [1000, 1000]
         self.dis_player = [[None, None], [None, None]]
-        # self.detector = [None, None]
+        self.info = Personar()
+        self.emo_queue = queue.Queue()
+        self.emo_flag = True
+        threading.Thread(target=self.play_emotions).start()
 
     def __del__(self):
         try:
@@ -29,8 +42,14 @@ class Robot:
             pass
         print("++++++++++++++++++++++++++++++++++++")
 
+    def _close(self):
+        try:
+            os.system("killall -s 9 omxplayer.bin")
+        except Exception:
+            pass
+
     def _create_task(self, cmd):
-        return Popen(cmd,stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
+        return Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
 
     def _terminate_task(self, pid):
         try:
@@ -63,18 +82,19 @@ class Robot:
         cmd += ['-o', 'local'] if sound else ['-n', '-1']
         if loop:
             cmd += ['--loop']
-        if num==0:
+        if num == 0:
             cmd += ['--win', "\"0 0 799 479\""]
         dis = self.dis_layer[num] % 2
         self.dis_layer[num] -= 1
-        if self.dis_layer[num] < 0:
+        if self.dis_layer[num] < 1:
             self.dis_layer[num] = 1000
         self.dis_player[num][dis] = self._create_task(cmd=cmd)
         if self.dis_player[num][1 - dis] != None:
-            threading.Timer(0.7, self._terminate_task, args=(self.dis_player[num][1 - dis].pid,)).start()
+            threading.Timer(0.7, self._terminate_task, args=(
+                self.dis_player[num][1 - dis].pid,)).start()
         if wait:
             self.dis_player[num][dis].wait()
-    
+
     def hdmi_open(self, fname, sound=False, wait=False, loop=False):
         print("Play video " + fname + " at HDMI")
         self._display(1, fname, sound, wait, loop)
@@ -111,73 +131,42 @@ class Robot:
         if wait:
             self.speaker.wait()
 
-    ############################### Snowboy Detector ######################
-    # def _detector(self, models_list, callback_list, sensitive_list):
-    #     self.detector[0] = snowboydecoder.HotwordDetector(models_list, sensitivity=sensitive_list)
-    #     self.detector[0].start(detected_callback=callback_list)
-
-    # def detector_start(self, models, callbacks, sensitives):
-    #     print("Start hotword detection")
-    #     self.detector[1] = threading.Thread(target=self._detector, args=(models, callbacks, sensitives,))
-    #     self.detector[1].start()
-
-    # def detector_stop(self):
-    #     print("Stop hotword detection")
-    #     self.detector[0].terminate()
-    #     self.detector[1].join(0)
-
-    # def detector_wav(self, fwave, fmodel):
-    #     f = wave.open(fwave)
-    #     # assert f.getnchannels() == 1,"Error: supports 1 channel only"
-    #     # assert f.getframerate() == 16000, "Error: supports 16K rate only"
-    #     # assert f.getsampwidth() == 2, "Error: supports 16bit per sample"
-    #     data = f.readframes(f.getnframes())
-    #     f.close()
-    #     return snowboydecoder.HotwordDetector(fmodel).detector.RunDetection(data)
-    ############################### Snowboy Detector ######################
-    
     def listen(self, timeout=6, lang="th-TH"):
         print("=== Listening ===")
         r = sr.Recognizer()
         with sr.Microphone() as source:
             r.adjust_for_ambient_noise(source)
+            r.energy_threshold = 1500
             audio = r.listen(source, phrase_time_limit=timeout)
         try:
             recog = r.recognize_google(audio, language=lang)
-            print("User:", recog) 
+            print("User:", recog)
             return recog
         except sr.UnknownValueError:
             print("--- No Sound ---")
             return 0
-        except sr.RequestError as e:
+        except sr.RequestError:
             print("--- No Service ---")
             return 0
-    
 
-# def voicetick():
-#     print("Hello World!")
+    def clear_emo(self):
+        print("### Clear Emotions")
+        while not self.emo_queue.empty():
+            self.emo_queue.get()
 
-# def voicetick2():
-#     print("Hello World2!")
+    def add_emo(self, emo, num=1):
+        print("### Add Emotions: " + str(num))
+        for i in range(num):
+            self.emo_queue.put(emo)
 
-# model = ["resources/hotwords/BitBot.pmdl", "resources/hotwords/snowboy.umdl"]
-# sensitive = [0.5, 0.7]
-# callback = [voicetick, voicetick2]
-
-# bitbot = Robot()
-# # bitbot.detector_start(model, callback, sensitive)
-# print(bitbot.detector_wav("resources/snowboy.wav", model[0]))
-# print(bitbot.detector_wav("resources/snowboy.wav", model[1]))
-
-# # for i in range(10):
-# #     print("In loop")
-# #     time.sleep(1)
-# # print("After loop")
-# # bitbot.detector_stop()
-
-# # for i in range(10):
-# #     print("In loop2")
-# #     time.sleep(1)
-# # print("After loop2")
-
-# # bitbot.recv("127.0.0.1",5000,hello)
+    def play_emotions(self):
+        while True:
+            if self.emo_queue.empty():
+                if self.emo_flag:
+                    self.dsi_open(emotions['Smile'][0], loop=True)
+                    self.emo_flag = False
+            else:
+                self.emo_flag = True
+                p = self.emo_queue.get()
+                self.dsi_open(p[0])
+                time.sleep(p[1] - 0.2)
