@@ -13,10 +13,15 @@ ans_list = ["น้อมรับคำสั่ง", "ว่ายังไง
 
 def bitbot():
     detector.terminate()
+<<<<<<< HEAD
     print("Conversation Started")
     bitbot_ai.run_session(True)
     print("Conversation Stop")
     print("Listening")
+=======
+    bitbot_ai.run_session(True)
+    print("=== Listening Bitbot ===")
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
     global detector
     detector = snowboydecoder.HotwordDetector(models, sensitivity=0.6, audio_gain=1.2)
     detector.start(callbacks)
@@ -25,5 +30,9 @@ def bitbot():
 callbacks = [bitbot]
 
 detector = snowboydecoder.HotwordDetector(models, sensitivity=0.6, audio_gain=1.2)
+<<<<<<< HEAD
 print("Listening")
+=======
+print("=== Listening Bitbot ===")
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
 detector.start(detected_callback=callbacks)

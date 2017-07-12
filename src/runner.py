@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from bitbot import Robot
 import threading
 import queue
@@ -9,11 +10,46 @@ BB = Robot()
 
 # print(BB.info.version)
 # print(".".join(str(int(x)+1) if i==2 else x for i,x in enumerate(BB.info.version)))
+<<<<<<< HEAD
 # print(BB.info.age)
 # print(BB.info.name)
 # print(BB.info.birthday)
 
 
+=======
+=======
+# from bitbot import Robot
+# import threading
+import queue
+# import time
+# # # import random
+
+# BB = Robot()
+
+ 
+from datetime import datetime
+
+q = queue.Queue()
+q.put('A')
+q.put('B')
+q.put('C')
+q.put('E')
+
+print(q.get())
+while not q.empty():
+    q.get()
+# q.Clear()
+print(q.empty())
+
+
+# print(BB.info.version)
+>>>>>>> 9179167fe60e9673ae374777c967f06910af27f9
+# print(BB.info.age)
+# print(BB.info.name)
+# print(BB.info.birthday)
+
+
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
 # def main():
 #     BB.speak("ว่าไงจ๊ะ", wait=False)
 #     recog = BB.listen()
@@ -43,12 +79,17 @@ BB = Robot()
 # bitbot.speak("ไม่บอกหรอก", True)
 # time.sleep(0.1)
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
 emotions = {
     "Smile" : ['emotions/bit_bot_emotion_1.mp4', 1.85],
     "Line" : ['emotions/bit_bot_emotion_2.mp4', 3.1],
     "Angry" : ['emotions/bit_bot_emotion_3.mp4', 4.2]
 }
 
+<<<<<<< HEAD
 
 BB.add_emo(emotions['Line'])
 BB.add_emo(emotions['Angry'])
@@ -58,6 +99,34 @@ BB.add_emo(emotions['Angry'])
 while True:
     print("Hi")
     time.sleep(1)
+=======
+
+BB.add_emo(emotions['Line'])
+BB.add_emo(emotions['Angry'])
+BB.add_emo(emotions['Smile'])
+BB.add_emo(emotions['Angry'])
+
+while True:
+    print("Hi")
+    time.sleep(1)
+=======
+# emotions = {
+#     "Smile" : ['emotions/bit_bot_emotion_1.mp4', 1.85],
+#     "Line" : ['emotions/bit_bot_emotion_2.mp4', 3.1],
+#     "Angry" : ['emotions/bit_bot_emotion_3.mp4', 4.2]
+# }
+
+
+# BB.add_emo(emotions['Line'])
+# BB.add_emo(emotions['Angry'])
+# BB.add_emo(emotions['Smile'])
+# BB.add_emo(emotions['Angry'])
+
+# while True:
+#     print("Hi")
+#     time.sleep(1)
+>>>>>>> 9179167fe60e9673ae374777c967f06910af27f9
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
 # print(emo_queue)
 # print(emo_queue.get())
 # print(emo_queue)

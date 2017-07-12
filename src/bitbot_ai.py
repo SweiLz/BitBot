@@ -57,13 +57,21 @@ def apiai_do(request, text):
                     num = 1
                 try:
                     order = order.replace('@', '')
+<<<<<<< HEAD
                     bb.add_emo(emotions[order], num)
+=======
+                    bb.add_emo(order, num)
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
                 except:
                     pass
             elif order[0] == '!':
                 order = order.replace('!', '')
                 try:
+<<<<<<< HEAD
                     bb.hdmi_open(order, sound=True)
+=======
+                    bb.hdmi_open(order)
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
                 except:
                     pass
             elif order[0] == '_':
@@ -80,7 +88,11 @@ def apiai_do(request, text):
                 elif speech == '#birthdate':
                     bb.speak("ฉันเกิดวันที่" + bb.info.birthday)
             else:
+<<<<<<< HEAD
                 bb.speak(order, wait=True)
+=======
+                bb.speak(speech, wait=True)
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
     except:
         print("apiai speech fail.")
 
@@ -186,7 +198,11 @@ def run_session(flag=False):
 
     # BB.dsi_open('emotions/bit_bot_emotion_1.mp4', loop=True)
     if flag:
+<<<<<<< HEAD
         bb.add_emo(emotions['Notification'])
+=======
+        bb.add_emo(emotions['Notification'], 3)
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
         bb.speak("น้อมรับคำสั่ง", wait=True)
     request = ai.text_request()
     t_th, t_eng = speech_input()

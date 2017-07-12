@@ -31,13 +31,18 @@ class Personar(object):
     @property
     def birthday(self):
         d = datetime.strptime(self.data['birthday'], '%Y-%m-%d %H:%M:%S')
+<<<<<<< HEAD
         return "วันที่ {0} เดือน {1} ปี {2}".format(d.day, d.month, d.year)
+=======
+        return "{0} เดือน {1} ปี {2}".format(d.day, d.month, d.year)
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
 
     @property
     def age(self):
         d = datetime.now() - datetime.strptime(self.data['birthday'], '%Y-%m-%d %H:%M:%S')
         h, s = divmod(d.seconds, 3600)
         m, s = divmod(s, 60)
+<<<<<<< HEAD
         return "{0} วัน {1} ชั่วโมง {2} นาที".format(d.days, h, m)
 
     @property
@@ -46,6 +51,17 @@ class Personar(object):
 
     def _up_version(self):
         ver = self.version
+=======
+        return "{0} วัน {1} ชั่วโมง {2} นาที {3} วินาที".format(d.days, h, m, s)
+
+    @property
+    def version(self):
+        # return list(map(int, self.data['version'].split('.')))
+        return self.data['version']
+
+    def _up_version(self):
+        ver = list(map(int, self.data['version'].split('.')))
+>>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
         ver[2] += 1
         if ver[2] == 100:
             ver[2] = 0
