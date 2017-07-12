@@ -41,6 +41,7 @@ def apiai_do(request, text):
         bb.speak("ฉันทำไม่ได้")
         print("apiai action fail.")
 
+<<<<<<< HEAD:src/bitbot_ai.py
     try:
         speech = response['result']['fulfillment']['speech']
         # example
@@ -88,6 +89,11 @@ def apiai_do(request, text):
         bb.clear_emo()
         bb.add_emo(emotions["Bomb"])
         # bb._close()
+=======
+    if action == 'ทำลายตัวเอง':
+        bb.dsi_open('videos/A-1.mp4', sound=True, wait=True)
+        bb._close()
+>>>>>>> 9179167fe60e9673ae374777c967f06910af27f9:src/bitbot_ai.py
     if action == 'สอนทำอาหาร':
         bb.hdmi_open('videos/motion_01.mp4', sound=True)
     if action == 'เล่นวิดีโอตามหมายเลข':
@@ -136,10 +142,17 @@ def apiai_do(request, text):
             counter = 0
             game = Count21()
             while play:
+<<<<<<< HEAD:src/bitbot_ai.py
                 x = run_session()
                 print('x :: ', x)
                 while x == 'ฉันเริ่มเล่นก่อน':
                     n = run_session()
+=======
+                x = main()
+                print('x :: ', x)
+                while x == 'ฉันเริ่มเล่นก่อน':
+                    n = main()
+>>>>>>> 9179167fe60e9673ae374777c967f06910af27f9:src/bitbot_ai.py
                     if type(n) == list:
                         x = n
 
@@ -180,6 +193,51 @@ def apiai_do(request, text):
     if action in ['ฉันเริ่มเล่นก่อน', 'บอทเริ่มเล่นก่อน']:
         bb.speak(response['result']['fulfillment']['speech'], wait=True)
         return action
+<<<<<<< HEAD:src/bitbot_ai.py
+=======
+    try:
+        speech = response['result']['fulfillment']['speech']
+        # example
+        # speech = "โกรธ@ฉันโกรธคุณ"
+        # speech.split('@') == ["โกรธ",ฉันโกรธคุณ"]
+        splt = speech.split('/')
+        print('speech : ', splt)
+        bb.clear_emo()
+        for order in splt:
+            if order[0] == '@':
+                try:
+                    num = [int(i) for i in order if i.isdigit()][0]
+                except:
+                    num = 1
+                try:
+                    order = order.replace('@', '')
+                    bb.add_emo(order, num)
+                except:
+                    pass
+            elif order[0] == '!':
+                order = order.replace('!', '')
+                try:
+                    bb.hdmi_open(order)
+                except:
+                    pass
+            elif order[0] == '_':
+                try:
+                    bb.hdmi_close()
+                except:
+                    pass
+            elif order[0] == '#':
+                # do action on some speech
+                if speech == '#name':
+                    bb.speak("ฉันคือ" + bb.info.name + "เวอร์ชั่น" + bb.info.version)
+                elif speech == '#age':
+                    bb.speak("ฉันมีอายุ" + bb.info.age)
+                elif speech == '#birthdate':
+                    bb.speak("ฉันเกิดวันที่" + bb.info.birthday)
+            else:
+                bb.speak(speech, wait=True)
+    except:
+        print("apiai speech fail.")
+>>>>>>> 9179167fe60e9673ae374777c967f06910af27f9:src/bitbot_ai.py
 
 
 def run_session(flag=False):
@@ -197,4 +255,8 @@ def run_session(flag=False):
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD:src/bitbot_ai.py
     run_session()
+=======
+    main()
+>>>>>>> 9179167fe60e9673ae374777c967f06910af27f9:src/bitbot_ai.py
