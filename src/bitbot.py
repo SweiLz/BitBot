@@ -9,25 +9,14 @@ from subprocess import PIPE, Popen
 import speech_recognition as sr
 from utils import Personar
 
-<<<<<<< HEAD
-
 emotions = {
     "Sad": ['emotions/bitbot_sad.m4v', 2.13],
     "Swift": ['emotions/bitbot_swift.m4v', 10.67],
     "Blink": ['emotions/bitbot_blink.m4v', 4.13],
     "Sleepy": ['emotions/bitbot_sleepy.m4v', 4.53],
     "Smile": ['emotions/bitbot_smile.m4v', 2.43],
-    "Notification": ['emotions/bitbot_notification.m4v', 11.03]
-=======
-emotions = {
-    "Sad" : ['emotions/bitbot_sad.m4v', 2.13],
-    "Swift" : ['emotions/bitbot_swift.m4v', 10.67],
-    "Blink" : ['emotions/bitbot_blink.m4v', 4.13],
-    "Sleepy" : ['emotions/bitbot_sleepy.m4v', 4.53],
-    "Smile" : ['emotions/bitbot_smile.m4v', 2.43],
-    "Notification" : ['emotions/bitbot_nontification.m4v', 11.03],
-    "Bomb" : ['emotions/bitbot_bomb.mp4', 5.11]
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
+    "Notification": ['emotions/bitbot_nontification.m4v', 11.03],
+    "Bomb": ['emotions/bitbot_bomb.mp4', 5.11]
 }
 
 
@@ -51,7 +40,7 @@ class Robot:
         except Exception:
             pass
         print("++++++++++++++++++++++++++++++++++++")
-    
+
     def _close(self):
         try:
             os.system("killall -s 9 python3 omxplayer.bin")
@@ -166,20 +155,12 @@ class Robot:
             return 0
 
     def clear_emo(self):
-<<<<<<< HEAD
-        print("### Clear Emotions")
-=======
         print("### Clear Emotions ###")
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
         while not self.emo_queue.empty():
             self.emo_queue.get()
 
     def add_emo(self, emo, num=1):
-<<<<<<< HEAD
-        print("### Add Emotions: " + str(num))
-=======
         print("### Add Emotions ###")
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
         for i in range(num):
             self.emo_queue.put(emo)
 
@@ -187,22 +168,13 @@ class Robot:
         while True:
             if self.emo_queue.empty():
                 if self.emo_flag:
-<<<<<<< HEAD
-                    self.dsi_open(emotions['Smile'][0], loop=True)
-=======
                     p = emotions['Smile']
                     print("### Play Emotion {0} ###".format(p[0]))
                     self.dsi_open(p[0], loop=True)
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
                     self.emo_flag = False
             else:
                 self.emo_flag = True
                 p = self.emo_queue.get()
-<<<<<<< HEAD
-                self.dsi_open(p[0])
-                time.sleep(p[1] - 0.2)
-=======
                 print("### Play Emotion {0} ###".format(p[0]))
                 self.dsi_open(p[0])
-                time.sleep(p[1]-0.2)
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
+                time.sleep(p[1] - 0.2)
