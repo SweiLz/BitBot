@@ -159,7 +159,11 @@ class HotwordDetector(object):
                 break
             data = self.ring_buffer.get()
             if len(data) == 0:
-                time.sleep(sleep_time)
+                try:
+                    time.sleep(sleep_time)
+                except KeyboardInterrupt:
+                    os.system("killall -s 9 python3 omxplayer.bin")
+                
                 continue
 
             ans = self.detector.RunDetection(data)

@@ -1,4 +1,4 @@
 .env/
 .vscode/
 __pycache__/
-resources/sounds/gtts/
+src/temp_test
