@@ -5,7 +5,7 @@ import os
 import bitbot_ai
 import snowboydecoder
 
-models = ["resources/BitBot.pmdl"]
+models = ["resources/hotwords/BitBot.pmdl"]
 
 ans_list = ["น้อมรับคำสั่ง", "ว่ายังไงจ๊ะ", "มาแล้วจ้า", "มีอะไรให้รับใช้",
             "ขอโทษจ้าฉันมาแล้ว", "มาแล้ว มาแล้ว", "มีอะไรขอให้บอก", "เรียกฉันหรอ"]
