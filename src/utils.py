@@ -1,8 +1,14 @@
 import json
 from datetime import datetime
 
+import requests
+from bs4 import BeautifulSoup as soup
+import pafy
+
+
 class Experience(object):
     pass
+
 
 class Personar(object):
     def __init__(self):
@@ -31,37 +37,22 @@ class Personar(object):
     @property
     def birthday(self):
         d = datetime.strptime(self.data['birthday'], '%Y-%m-%d %H:%M:%S')
-<<<<<<< HEAD
-        return "วันที่ {0} เดือน {1} ปี {2}".format(d.day, d.month, d.year)
-=======
         return "{0} เดือน {1} ปี {2}".format(d.day, d.month, d.year)
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
 
     @property
     def age(self):
-        d = datetime.now() - datetime.strptime(self.data['birthday'], '%Y-%m-%d %H:%M:%S')
+        d = datetime.now() - \
+            datetime.strptime(self.data['birthday'], '%Y-%m-%d %H:%M:%S')
         h, s = divmod(d.seconds, 3600)
         m, s = divmod(s, 60)
-<<<<<<< HEAD
-        return "{0} วัน {1} ชั่วโมง {2} นาที".format(d.days, h, m)
-
-    @property
-    def version(self):
-        return list(map(int, self.data['version'].split('.')))
-
-    def _up_version(self):
-        ver = self.version
-=======
         return "{0} วัน {1} ชั่วโมง {2} นาที {3} วินาที".format(d.days, h, m, s)
 
     @property
     def version(self):
-        # return list(map(int, self.data['version'].split('.')))
         return self.data['version']
 
     def _up_version(self):
         ver = list(map(int, self.data['version'].split('.')))
->>>>>>> 8024d7458773fe9252b3259f40e1d3711f00ccf0
         ver[2] += 1
         if ver[2] == 100:
             ver[2] = 0
@@ -70,3 +61,36 @@ class Personar(object):
                 ver[1] = 0
                 ver[0] += 1
         self.update('version', ".".join(map(str, ver)))
+
+
+class Sight(object):
+    def __init__(self):
+        pass
+
+    def yt_search(self, query):
+        print("### Search Youtube ###")
+        print("Search: " + query)
+        url = "https://www.youtube.com/results?search_query=" + query
+        s = soup(requests.get(url).content, "html.parser")
+        res = []
+        for vid in s.find_all(attrs={'class': 'yt-uix-tile-link'}):
+            if not vid['href'].startswith("https://googleads.g.doubleclick.net/‌​"):
+                if 'list' not in vid['href']:
+                    print(vid)
+                    res.append(vid['href'])
+                    return res
+
+    def yt_genstream(self, link):
+        print("### Generate Link Youtube ###")
+        urlx = 'http://www.youtube.com' + link
+        video = pafy.new(urlx)
+        video_obj = video.getbest('mp4')
+        if video_obj is None:
+            video_obj = video.getbest('flv')
+        video_url = video_obj.url
+        print(video_url)
+        return video_url
+
+
+# yt = Sight()
+# print(yt.yt_search("เพลงโดราเอม่อน"))

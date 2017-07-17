@@ -102,7 +102,20 @@ def apiai_do(request, text):
         else:
             bb.speak("ฉันไม่เข้าใจที่คุณพูด")
     except:
-        print("apiai speech fail.")
+        try:
+            speech = response['result']['fulfillment']['speech']
+            if speech == '#name':
+                bb.speak("ฉันคือ" + bb.info.name + "เวอร์ชั่น" + bb.info.version)
+            elif speech == '#age':
+                bb.speak("ฉันมีอายุ" + bb.info.age)
+            elif speech == '#birthdate':
+                bb.speak("ฉันเกิดวันที่" + bb.info.birthday)
+            elif order not in [' ', '', [' '], ['']]:
+                bb.speak(speech, wait=True)
+            else:
+                bb.speak("ฉันไม่เข้าใจที่คุณพูด", wait=True)
+        except:
+            print("apiai speech fail.")
 
     if action == 'ทำลายตัวเอง':
         bb.clear_emo()
