@@ -17,9 +17,9 @@ emotions = {
     "Sleepy": ['emotions/bitbot_sleepy.m4v', 4.53],
     "Smile": ['emotions/bitbot_smile.m4v', 2.43],
     "Notification": ['emotions/bitbot_nontification.m4v', 11.03],
-    "Bomb": ['emotions/bitbot_bomb.mp4', 5.11, True],
+    "Bomb": ['emotions/bitbot_bomb.mp4', 5.11],
     "Loading": ['emotions/bitbot_downloading.m4v', 2.23],
-    "During_Clip": ['emotions/bitbot_during_clip.m4a', 3.73]
+    "During": ['emotions/bitbot_during_clip.m4v', 3.73]
 }
 
 
@@ -80,7 +80,7 @@ class Robot:
     def _display(self, num, fname, sound=False, wait=False, loop=False):
         cmd = ['omxplayer', fname, '-b', '--no-osd', '--layer',
                str(self.dis_layer[num]), '--display']
-        cmd += ['5'] if num else ['0']
+        cmd += ['5', '--orientation', '180'] if num else ['0']
         cmd += ['-o', 'local'] if sound else ['-n', '-1']
         if loop:
             cmd += ['--loop']
@@ -108,7 +108,7 @@ class Robot:
         self._terminate_task(self.dis_player[1][0].pid)
 
     def dsi_open(self, fname, sound=False, wait=False, loop=False):
-        # print("Play video " + fname + " at DSI")
+         #print("Play video " + fname + " at DSI")
         fname = "resources/" + fname
         self._display(0, fname, sound, wait, loop)
 
@@ -129,17 +129,21 @@ class Robot:
             cmd += ['overdrive', '25', '25']
             cmd += ['echo', '0.4', '0.8', '15', '0.8']
             cmd += ['synth', 'sine', 'fmod', '30']
-        cmd += ['speed', '1.3']
+        if process:
+            cmd += ['speed', '3']
+        else:
+            cmd += ['speed', '1.3']
         self.speaker = self._create_task(cmd=cmd)
         if wait:
             self.speaker.wait()
 
-    def listen(self, timeout=6, lang="th-TH"):
+    def listen(self, timeout=5.0, lang="th-TH"):
         print("=== Listening Recognition ===")
         r = sr.Recognizer()
         with sr.Microphone() as source:
+            r.energy_threshold = 1000
             r.adjust_for_ambient_noise(source)
-            r.energy_threshold = 1500
+            r.pause_threshold = 1.2
             audio = r.listen(source, phrase_time_limit=timeout)
         try:
             recog = r.recognize_google(audio, language=lang)
@@ -160,7 +164,7 @@ class Robot:
     def add_emo(self, emo, num=1):
         print("### Add Emotions ###")
         for i in range(num):
-            self.emo_queue.put(emo)
+            self.emo_queue.put(emotions[emo])
 
     def play_emotions(self):
         while True:

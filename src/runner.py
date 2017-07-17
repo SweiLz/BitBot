@@ -1,9 +1,39 @@
 # from pytube import YouTube
-from bitbot import Robot
-import time
+# from bitbot import Robot
+# import time
+from gcloud import storage
 
-BB = Robot()
-yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
+# If you don't specify credentials when constructing the client, the
+# client library will look for credentials in the environment.
+storage_client = storage.Client()
+
+# Make an authenticated API request
+buckets = list(storage_client.list_buckets())
+print(buckets)
+# import speech_recognition as sr
+
+# # obtain path to "english.wav" in the same folder as this script
+# from os import path
+# AUDIO_FILE = "audio.wav"
+
+# # use the audio file as the audio source
+# r = sr.Recognizer()
+# with sr.AudioFile(AUDIO_FILE) as source:
+#     audio = r.record(source)  # read the entire audio file
+
+# # recognize speech using Google Cloud Speech
+# GOOGLE_CLOUD_SPEECH_CREDENTIALS = r"Amatar Robotics-8ca65f285ed6.json"
+
+# try:
+#     print("Google Cloud Speech thinks you said: " + r.recognize_google_cloud(audio,
+#                                                                              credentials_json=GOOGLE_CLOUD_SPEECH_CREDENTIALS))
+# except sr.UnknownValueError:
+#     print("Google Cloud Speech could not understand audio")
+# except sr.RequestError as e:
+#     print(
+#         "Could not request results from Google Cloud Speech service; {0}".format(e))
+# BB = Robot()
+# yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
 # ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
 
 # with ydl:
@@ -21,7 +51,7 @@ yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
 #link = "https://www.youtube.com/watch?v=IOYyCHGWJq4"
 
 # print(yt_list)
-# url = BB.sight.yt_genstream("/watch?v=E8-6_emBwNM")
+# url = BB.sight.yt_genstream(yt_list[0])
 # # print(url)
 # print("OKKKK")
 # BB.hdmi_open(url, sound=True)
