@@ -1,9 +1,10 @@
-from bitbot import Robot, emotions
+from bitbot import Robot
 import json
 import speech_recognition as sr
 from googletrans import Translator
 from count21 import *
 import apiai
+import random
 CLIENT_ACCESS_TOKEN = '29234bbc7c0c4467ab38edd3ebb6c4f3'
 ai = apiai.ApiAI(CLIENT_ACCESS_TOKEN)
 translator = Translator(service_urls=['translate.google.co.th',
@@ -13,15 +14,18 @@ bb = Robot()
 
 
 def speech_input():
+    bb.add_emo('Blink', 100)
     print('[]')
     bb.audio_open("ding2.wav")
     text_th = bb.listen()
-    bb.audio_open("ding3.wav", wait=True)
+    bb.audio_open("ding3.wav")
     if text_th == 0:
         bb.speak("ฉันฟังไม่ค่อยออก")
+        bb.clear_emo()
         return 0, 0
     text_en = translator.translate(text_th, dest='en').text
     print("text_en :", text_en)
+    bb.clear_emo()
     return text_th, text_en
 
 
@@ -29,73 +33,87 @@ def apiai_do(request, text):
     request.query = text
     action = 'None'
     response = json.loads(request.getresponse().read().decode('utf8'))
+    speech = response['result']['fulfillment']['speech']
     try:
         action = response['result']['action']
         print('Action is {}'.format(action))
         print('Parameter is ...')
-        print(response['result']['parameters'])
         if action == 'input.unknown':
             bb.speak("ฉันไม่เข้าใจ")
-            return 0
     except:
-        bb.speak("ฉันทำไม่ได้")
+        bb.speak("ฉันทำไม่ได้", wait=True)
         print("apiai action fail.")
-
     try:
-        speech = response['result']['fulfillment']['speech']
-        # example
-        # speech = "โกรธ@ฉันโกรธคุณ"
-        # speech.split('@') == ["โกรธ",ฉันโกรธคุณ"]
-        splt = speech.split('+')
-        print('speech : ', splt)
-        bb.clear_emo()
-        for order in splt:
-            if order[0] == '@':
+        # print(response['result']['fulfillment']['messages']['payload'])
+        payload = response['result']['fulfillment']['messages'][-1]['payload']
+        rand = random.choice(list(payload.keys()))
+        payload = payload[rand]
+        for order in payload:
+            if order == 'emotions':
+                bb.clear_emo()
+                emo_list = payload[order]
+                print('emotions list is : ', emo_list)
+                for emo in emo_list:
+                    try:
+                        num = [int(i) for i in emo if i.isdigit()][0]
+                    except:
+                        num = 1
+                    try:
+                        emo = emo[:-1]
+                        bb.add_emo(emo, num)
+                    except:
+                        print('add emo error!')
+                        pass
+            elif order == 'video':
                 try:
-                    num = [int(i) for i in order if i.isdigit()][0]
-                except:
-                    num = 1
-                try:
-                    order = order.replace('@', '')
-                    bb.add_emo(emotions[order], num)
+                    print('hdmi-video :', payload[order])
+                    bb.hdmi_open("resources/" + payload[order], sound=True)
                 except:
                     pass
-            elif order[0] == '!':
-                order = order.replace('!', '')
-                try:
-                    bb.hdmi_open(order, sound=True)
-                except:
-                    pass
-            elif order[0] == '_':
+            elif order == 'youtube':
+                bb.speak('อยากให้ค้นหาว่าอะไรหรอ', wait=True)
+                text_th, _ = speech_input()
+                bb.add_emo('Loading', 200)
+                bb.speak('ฉันขอเวลาไปหา' + text_th + 'ให้คุณสักพักนะ อย่าพึ่งไปไหนหละ เดี๋ยวฉันมา')
+                yt_list = bb.sight.yt_search(text_th)
+                url = bb.sight.yt_genstream(yt_list[0])
+                bb.clear_emo()
+                bb.add_emo('During', 2)
+                bb.speak('โอเค ฉันเจอวิดีโอของคุณแล้ว', wait=True)
+                bb.hdmi_open(url, sound=True)
+            elif order == "video_close":
                 try:
                     bb.hdmi_close()
                 except:
                     pass
-            elif order[0] == '#':
-                # do action on some speech
-                if speech == '#name':
-                    bb.speak("ฉันคือ" + bb.info.name + "เวอร์ชั่น" + bb.info.version)
-                elif speech == '#age':
-                    bb.speak("ฉันมีอายุ" + bb.info.age)
-                elif speech == '#birthdate':
-                    bb.speak("ฉันเกิดวันที่" + bb.info.birthday)
-            else:
-                bb.speak(order, wait=True)
+            elif order == 'speech':
+                speech = payload[order]
+    except:
+        pass
+    try:
+        if speech == '#name':
+            bb.speak("ฉันคือ" + bb.info.name + "เวอร์ชั่น" + bb.info.version)
+        elif speech == '#age':
+            bb.speak("ฉันมีอายุ" + bb.info.age)
+        elif speech == '#birthdate':
+            bb.speak("ฉันเกิดวันที่" + bb.info.birthday)
+        elif speech not in [' ', '', [' '], ['']]:
+            bb.speak(speech)
+        else:
+            bb.speak("ฉันไม่เข้าใจที่คุณพูด")
     except:
         print("apiai speech fail.")
 
     if action == 'ทำลายตัวเอง':
         bb.clear_emo()
-        bb.add_emo(emotions["Bomb"])
+        bb.add_emo("Bomb")
         # bb._close()
-    if action == 'สอนทำอาหาร':
-        bb.hdmi_open('videos/motion_01.mp4', sound=True)
     if action == 'เล่นวิดีโอตามหมายเลข':
         num_videolist = response['result']['parameters']['Number']  # list
         v_action = response['result']['parameters']['Video-Command']
         if v_action == 'เล่น':
-            print('videos/A-{}.mp4'.format(num_videolist))
-            bb.hdmi_open('videos/A-{}.mp4'.format(num_videolist), sound=True)
+            print('resources/videos/A-{}.mp4'.format(num_videolist))
+            bb.hdmi_open('resources/videos/A-{}.mp4'.format(num_videolist), sound=True)
         if v_action == 'หยุดเล่น':
             print('หยุดเล่นวิดีโอ')
             bb.hdmi_close()
@@ -165,9 +183,9 @@ def apiai_do(request, text):
                         counter = bt[-1]
                         a = ' '
                         for i in bt:
-                            a += str(i) + ' '
-                        if a <= 21:
-                            bb.speak(a, wait=True)
+                            if i <= 21:
+                                a += str(i) + ' '
+                        bb.speak(a, wait=True)
                         if 21 in x:
                             bb.speak('คุณชนะแล้ว เก่งจริงๆเลย', wait=True)
                             play = False
@@ -178,16 +196,17 @@ def apiai_do(request, text):
     if action == 'กำลังเล่นเกม21':
         return list(response['result']['parameters']['number'])
     if action in ['ฉันเริ่มเล่นก่อน', 'บอทเริ่มเล่นก่อน']:
-        bb.speak(response['result']['fulfillment']['speech'], wait=True)
+        # bb.speak(response['result']['fulfillment']['speech'], wait=True)
         return action
+
+
+# ans_list = ["น้อมรับคำสั่ง", "ว่ายังไงจ๊ะ", "มาแล้วจ้า", "มีอะไรให้รับใช้",
+        # "ขอโทษจ้าฉันมาแล้ว", "มาแล้ว มาแล้ว", "มีอะไรขอให้บอก", "เรียกฉันหรอ"]
 
 
 def run_session(flag=False):
 
     # BB.dsi_open('emotions/bit_bot_emotion_1.mp4', loop=True)
-    if flag:
-        bb.add_emo(emotions['Notification'])
-        bb.speak("น้อมรับคำสั่ง", wait=True)
     request = ai.text_request()
     t_th, t_eng = speech_input()
     if t_th != 0 and t_eng != 0:

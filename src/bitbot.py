@@ -1,13 +1,14 @@
 import os
+import queue
 import signal
 import threading
 import time
-import queue
-# import wave
 from subprocess import PIPE, Popen
 
 import speech_recognition as sr
-from utils import Personar
+
+from utils import Personar, Sight
+
 
 emotions = {
     "Sad": ['emotions/bitbot_sad.m4v', 2.13],
@@ -16,7 +17,9 @@ emotions = {
     "Sleepy": ['emotions/bitbot_sleepy.m4v', 4.53],
     "Smile": ['emotions/bitbot_smile.m4v', 2.43],
     "Notification": ['emotions/bitbot_nontification.m4v', 11.03],
-    "Bomb": ['emotions/bitbot_bomb.mp4', 5.11]
+    "Bomb": ['emotions/bitbot_bomb.mp4', 5.11],
+    "Loading": ['emotions/bitbot_downloading.m4v', 2.23],
+    "During": ['emotions/bitbot_during_clip.m4v', 3.73]
 }
 
 
@@ -30,6 +33,7 @@ class Robot:
         self.dis_layer = [1000, 1000]
         self.dis_player = [[None, None], [None, None]]
         self.info = Personar()
+        self.sight = Sight()
         self.emo_queue = queue.Queue()
         self.emo_flag = True
         threading.Thread(target=self.play_emotions).start()
@@ -37,21 +41,15 @@ class Robot:
     def __del__(self):
         try:
             os.system("killall -s 9 python3 omxplayer.bin")
-        except Exception:
-            pass
+        except Exception as e:
+            print("ERROR => {0} <=".format(e))
         print("++++++++++++++++++++++++++++++++++++")
 
     def _close(self):
         try:
             os.system("killall -s 9 python3 omxplayer.bin")
-        except Exception:
-            pass
-
-    def _close(self):
-        try:
-            os.system("killall -s 9 omxplayer.bin")
-        except Exception:
-            pass
+        except Exception as e:
+            print("ERROR => {0} <=".format(e))
 
     def _create_task(self, cmd):
         return Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
@@ -59,8 +57,8 @@ class Robot:
     def _terminate_task(self, pid):
         try:
             os.killpg(os.getpgid(pid), signal.SIGTERM)
-        except Exception:
-            pass
+        except Exception as e:
+            print("ERROR => {0} <=".format(e))
 
     def _audio(self, fname, terminate=False, wait=False):
         ENDPOINT = "resources/" + fname
@@ -80,10 +78,9 @@ class Robot:
         self._terminate_task(self.audio_player.pid)
 
     def _display(self, num, fname, sound=False, wait=False, loop=False):
-        ENDPOINT = "resources/" + fname
-        cmd = ['omxplayer', ENDPOINT, '-b', '--no-osd', '--layer',
+        cmd = ['omxplayer', fname, '-b', '--no-osd', '--layer',
                str(self.dis_layer[num]), '--display']
-        cmd += ['5'] if num else ['0']
+        cmd += ['5', '--orientation', '180'] if num else ['0']
         cmd += ['-o', 'local'] if sound else ['-n', '-1']
         if loop:
             cmd += ['--loop']
@@ -101,7 +98,7 @@ class Robot:
             self.dis_player[num][dis].wait()
 
     def hdmi_open(self, fname, sound=False, wait=False, loop=False):
-        print("Play video " + fname + " at HDMI")
+        print("Play video at HDMI")
         self._display(1, fname, sound, wait, loop)
 
     def hdmi_close(self):
@@ -111,7 +108,8 @@ class Robot:
         self._terminate_task(self.dis_player[1][0].pid)
 
     def dsi_open(self, fname, sound=False, wait=False, loop=False):
-        # print("Play video " + fname + " at DSI")
+         #print("Play video " + fname + " at DSI")
+        fname = "resources/" + fname
         self._display(0, fname, sound, wait, loop)
 
     def dsi_close(self):
@@ -131,18 +129,31 @@ class Robot:
             cmd += ['overdrive', '25', '25']
             cmd += ['echo', '0.4', '0.8', '15', '0.8']
             cmd += ['synth', 'sine', 'fmod', '30']
-        cmd += ['speed', '1.3']
+        if process:
+            cmd += ['speed', '3']
+        else:
+            cmd += ['speed', '1.3']
         self.speaker = self._create_task(cmd=cmd)
         if wait:
             self.speaker.wait()
 
-    def listen(self, timeout=6, lang="th-TH"):
+    def listen(self,  lang="th-TH"):
         print("=== Listening Recognition ===")
         r = sr.Recognizer()
         with sr.Microphone() as source:
+            '''
+            energy_threshold range is 0-4000  , silent room are 0-00 , louder room are 3000-4000
+            high value = less sensitive 
+            '''
+            # r.energy_threshold = 0
             r.adjust_for_ambient_noise(source)
-            r.energy_threshold = 1500
-            audio = r.listen(source, phrase_time_limit=timeout)
+            r.dynamic_energy_threshold = True
+            # r.pause_threshold = 1
+            ''' timeout is the maximum number of seconds that this will wait for
+            # a phrase to start before giving up
+            # The phrase_time_limit parameter is the maximum number of seconds
+            # that this will allow a phrase to continue before stopping'''
+            audio = r.listen(source, phrase_time_limit=5)
         try:
             recog = r.recognize_google(audio, language=lang)
             print("User:", recog)
@@ -162,7 +173,7 @@ class Robot:
     def add_emo(self, emo, num=1):
         print("### Add Emotions ###")
         for i in range(num):
-            self.emo_queue.put(emo)
+            self.emo_queue.put(emotions[emo])
 
     def play_emotions(self):
         while True:
