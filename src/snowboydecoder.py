@@ -177,7 +177,11 @@ class HotwordDetector(object):
                 logger.info(message)
                 callback = detected_callback[ans - 1]
                 if callback is not None:
-                    callback()
+                    try:
+                        callback()
+                    except KeyboardInterrupt:
+                        os.system("killall -s 9 python3 omxplayer.bin")
+                        
 
         logger.debug("finished.")
 

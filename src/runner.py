@@ -1,42 +1,78 @@
-<<<<<<< HEAD
+# from pytube import YouTube
 from bitbot import Robot
-import threading
-import queue
 import time
-# # import random
 
 BB = Robot()
+yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
+# ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+
+# with ydl:
+#     result = ydl.extract_info(
+#         'http://www.youtube.com' + yt_list[0],
+#         download=False  # We just want to extract the info
+#     )
 
 
-# print(BB.info.version)
-# print(".".join(str(int(x)+1) if i==2 else x for i,x in enumerate(BB.info.version)))
-=======
-# from bitbot import Robot
-# import threading
-import queue
-# import time
-# # # import random
+# video_url = result.keys()
+# print(video_url)
 
-# BB = Robot()
+# print(result['url'])
+#
+#link = "https://www.youtube.com/watch?v=IOYyCHGWJq4"
 
- 
-from datetime import datetime
+# print(yt_list)
+url = BB.sight.yt_genstream(yt_list[0])
+# # print(url)
+# print("OKKKK")
+BB.hdmi_open(url, sound=True)
+time.sleep(10)
+# time.sleep(5)
+# import requests
+# from bs4 import BeautifulSoup
 
-q = queue.Queue()
-q.put('A')
-q.put('B')
-q.put('C')
-q.put('E')
+# query = "เพลงสากลใหม่ๆ"
+# url = "https://www.youtube.com/results?search_query=" + query
 
-print(q.get())
-while not q.empty():
-    q.get()
-# q.Clear()
-print(q.empty())
+# # print('yxu' in url)
+# res = requests.get(url)
+# soup = BeautifulSoup(res.content, "html.parser")
+# print("OKKKKKKK\n")
+# print([vid['href'] for vid in soup.findAll(
+#     attrs={'class': 'yt-uix-tile-link'}) if 'list' not in vid['href']])
+# for vid in soup.findAll(attrs={'class': 'yt-uix-tile-link'}):
+#     if 'list' not in vid['href']:
+#         print(vid['title'], 'https://www.youtube.com' + vid['href'])
 
+# print(soup)
 
-# print(BB.info.version)
->>>>>>> 9179167fe60e9673ae374777c967f06910af27f9
+# BB.loadYoutube(link)
+# print("OK")
+# time.sleep(5)
+#cmd = ['youtube-dl', '-g', link]
+# print("Downloading")
+# yt = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+#           close_fds=True, preexec_fn=os.setsid).communicate()[0]
+#
+#url = yt.decode("utf-8").split('\n')[0]
+# print(url)
+#
+# print("Playing")
+#cmd = ['omxplayer', '--display', '0', '-o', 'local', url]
+##os.system("omxplayer --display 0 -o local \"{0}\"".format(url))
+# Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
+#      close_fds=True, preexec_fn=os.setsid)
+# prin(res)
+# print("HI")
+# time.sleep(5)
+
+# yt = YouTube("https://www.youtube.com/watch?v=IOg45dmtqPc")
+
+# print(yt.get_videos())
+# print(yt.)
+# print(yt.filename)
+# print(yt.filter('mp4'))
+# video = yt.get('mp4', '360p')
+# video.download("")
 # print(BB.info.age)
 # print(BB.info.name)
 # print(BB.info.birthday)
@@ -45,10 +81,8 @@ print(q.empty())
 # def main():
 #     BB.speak("ว่าไงจ๊ะ", wait=False)
 #     recog = BB.listen()
-   
+
 # BB.detector_start(["resources/BitBot.pmdl"],[main],[0.5])
-
-
 
 
 # detector = snowboydecoder.HotwordDetector(models, sensitivity=0.5)
@@ -71,23 +105,6 @@ print(q.empty())
 # bitbot.speak("ไม่บอกหรอก", True)
 # time.sleep(0.1)
 
-<<<<<<< HEAD
-emotions = {
-    "Smile" : ['emotions/bit_bot_emotion_1.mp4', 1.85],
-    "Line" : ['emotions/bit_bot_emotion_2.mp4', 3.1],
-    "Angry" : ['emotions/bit_bot_emotion_3.mp4', 4.2]
-}
-
-
-BB.add_emo(emotions['Line'])
-BB.add_emo(emotions['Angry'])
-BB.add_emo(emotions['Smile'])
-BB.add_emo(emotions['Angry'])
-
-while True:
-    print("Hi")
-    time.sleep(1)
-=======
 # emotions = {
 #     "Smile" : ['emotions/bit_bot_emotion_1.mp4', 1.85],
 #     "Line" : ['emotions/bit_bot_emotion_2.mp4', 3.1],
@@ -103,7 +120,6 @@ while True:
 # while True:
 #     print("Hi")
 #     time.sleep(1)
->>>>>>> 9179167fe60e9673ae374777c967f06910af27f9
 # print(emo_queue)
 # print(emo_queue.get())
 # print(emo_queue)
@@ -114,16 +130,15 @@ while True:
 #     bitbot.dsi_open(value[0])
 #     time.sleep(value[1])
 
-
-    # bitbot.dsi_open('emotions/bit_bot_emotion_1.mp4')
-    # time.sleep(1.85)
-    # bitbot.dsi_open('emotions/bit_bot_emotion_2.mp4')
-    # time.sleep(3.1)
-    # # bitbot.dsi_open('emotions/bit_bot_emotion_1.mp4')
-    # # time.sleep(1.85)
-    # bitbot.dsi_open('emotions/bit_bot_emotion_3.mp4')
-    # time.sleep(4.2)
-    # print(i)
+# bitbot.dsi_open('emotions/bit_bot_emotion_1.mp4')
+# time.sleep(1.85)
+# bitbot.dsi_open('emotions/bit_bot_emotion_2.mp4')
+# time.sleep(3.1)
+# # bitbot.dsi_open('emotions/bit_bot_emotion_1.mp4')
+# # time.sleep(1.85)
+# bitbot.dsi_open('emotions/bit_bot_emotion_3.mp4')
+# time.sleep(4.2)
+# print(i)
 # print("play \""+"เล่นวีดีโอ ที่ 7.mp3\"")
 # bitbot.audio_open("ding.wav", wait=True)
 # for i in range(5):
