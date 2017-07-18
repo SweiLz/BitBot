@@ -1,13 +1,14 @@
 import json
 from datetime import datetime
 
-import requests
-from bs4 import BeautifulSoup as soup
 import pafy
+import requests
+import wikipedia as wk
+from bs4 import BeautifulSoup as soup
 
 
-class Experience(object):
-    pass
+# class Experience(object):
+# pass
 
 
 class Personar(object):
@@ -92,5 +93,23 @@ class Sight(object):
         return video_url
 
 
+class Chatty(object):
+    def __init__(self):
+        print("I'm chatty")
+
+    def message(self, text):
+        return text
 # yt = Sight()
 # print(yt.yt_search("เพลงโดราเอม่อน"))
+
+
+# ch = Chatty()
+# while True:
+#     print(">>>", ch.message(input("<<< ")))
+
+class Knowledge(object):
+    def __init__(self):
+        wk.set_lang("th")
+
+    def wk_search(self, title):
+        return wk.summary(title)

@@ -1,15 +1,38 @@
 # from pytube import YouTube
 # from bitbot import Robot
+import json
+
+import requests
+
+# Make it a bit prettier..
+print("-" * 30)
+print("This will show the Most Popular Videos on YouTube")
+print("-" * 30)
+
+# Get the feed
+r = requests.get(
+    "http://gdata.youtube.com/feeds/api/standardfeeds/top_rated?v=2.1&alt=jsonc")
+# Convert it to a Python dictionary
+data = json.loads(r.text)
+print(data)
+# Loop through the result.
+# for item in data['data']['items']:
+
+#     print("Video Title: %s" % (item['title']))
+#     print("Video Category: %s" % (item['category']))
+#     print("Video ID: %s" % (item['id']))
+#     print("Video Rating: %f" % (item['rating']))
+#     print("Embed URL: %s" % (item['player']['default']))
+
 # import time
-from gcloud import storage
+
 
 # If you don't specify credentials when constructing the client, the
 # client library will look for credentials in the environment.
-storage_client = storage.Client()
+
 
 # Make an authenticated API request
-buckets = list(storage_client.list_buckets())
-print(buckets)
+
 # import speech_recognition as sr
 
 # # obtain path to "english.wav" in the same folder as this script
@@ -33,6 +56,9 @@ print(buckets)
 #     print(
 #         "Could not request results from Google Cloud Speech service; {0}".format(e))
 # BB = Robot()
+# res = BB.know.wk_search("ภาษาไพทอน")
+# BB.speak(res, wait=True)
+
 # yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
 # ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
 
