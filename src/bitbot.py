@@ -137,14 +137,23 @@ class Robot:
         if wait:
             self.speaker.wait()
 
-    def listen(self, timeout=5.0, lang="th-TH"):
+    def listen(self,  lang="th-TH"):
         print("=== Listening Recognition ===")
         r = sr.Recognizer()
         with sr.Microphone() as source:
-            r.energy_threshold = 1000
+            '''
+            energy_threshold range is 0-4000  , silent room are 0-00 , louder room are 3000-4000
+            high value = less sensitive 
+            '''
+            # r.energy_threshold = 0
             r.adjust_for_ambient_noise(source)
-            r.pause_threshold = 1.2
-            audio = r.listen(source, phrase_time_limit=timeout)
+            r.dynamic_energy_threshold = True
+            # r.pause_threshold = 1
+            ''' timeout is the maximum number of seconds that this will wait for
+            # a phrase to start before giving up
+            # The phrase_time_limit parameter is the maximum number of seconds
+            # that this will allow a phrase to continue before stopping'''
+            audio = r.listen(source, phrase_time_limit=5)
         try:
             recog = r.recognize_google(audio, language=lang)
             print("User:", recog)
