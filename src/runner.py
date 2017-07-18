@@ -1,20 +1,24 @@
 # from pytube import YouTube
 # from bitbot import Robot
-import json
+# import json
 
-import requests
+
+text = "สวัสดีเพื่อนๆของฉันเฟสบุ๊คด้วย"
+
+
+# import requests
 
 # Make it a bit prettier..
-print("-" * 30)
-print("This will show the Most Popular Videos on YouTube")
-print("-" * 30)
+# print("-" * 30)
+# print("This will show the Most Popular Videos on YouTube")
+# print("-" * 30)
 
-# Get the feed
-r = requests.get(
-    "http://gdata.youtube.com/feeds/api/standardfeeds/top_rated?v=2.1&alt=jsonc")
-# Convert it to a Python dictionary
-data = json.loads(r.text)
-print(data)
+# # Get the feed
+# r = requests.get(
+#     "http://gdata.youtube.com/feeds/api/standardfeeds/top_rated?v=2.1&alt=jsonc")
+# # Convert it to a Python dictionary
+# # data = json.loads(r.text)
+# # print(data)
 # Loop through the result.
 # for item in data['data']['items']:
 
@@ -74,7 +78,7 @@ print(data)
 
 # print(result['url'])
 #
-#link = "https://www.youtube.com/watch?v=IOYyCHGWJq4"
+# link = "https://www.youtube.com/watch?v=IOYyCHGWJq4"
 
 # print(yt_list)
 # url = BB.sight.yt_genstream(yt_list[0])
@@ -104,17 +108,17 @@ print(data)
 # BB.loadYoutube(link)
 # print("OK")
 # time.sleep(5)
-#cmd = ['youtube-dl', '-g', link]
+# cmd = ['youtube-dl', '-g', link]
 # print("Downloading")
 # yt = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
 #           close_fds=True, preexec_fn=os.setsid).communicate()[0]
 #
-#url = yt.decode("utf-8").split('\n')[0]
+# url = yt.decode("utf-8").split('\n')[0]
 # print(url)
 #
 # print("Playing")
-#cmd = ['omxplayer', '--display', '0', '-o', 'local', url]
-##os.system("omxplayer --display 0 -o local \"{0}\"".format(url))
+# cmd = ['omxplayer', '--display', '0', '-o', 'local', url]
+# os.system("omxplayer --display 0 -o local \"{0}\"".format(url))
 # Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
 #      close_fds=True, preexec_fn=os.setsid)
 # prin(res)
