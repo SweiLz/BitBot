@@ -1,15 +1,6 @@
 import json
 from datetime import datetime
 
-<<<<<<< HEAD
-import requests
-from bs4 import BeautifulSoup as soup
-import pafy
-
-
-class Experience(object):
-    pass
-=======
 import pafy
 import PyICU
 import requests
@@ -20,8 +11,6 @@ from rivescript import RiveScript
 
 # class Experience(object):
 # pass
-
->>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
 
 
 class Personar(object):
@@ -106,10 +95,6 @@ class Sight(object):
         return video_url
 
 
-<<<<<<< HEAD
-# yt = Sight()
-# print(yt.yt_search("เพลงโดราเอม่อน"))
-=======
 class Chatty(object):
     def __init__(self):
         self._chatter = RiveScript(utf8=True)
@@ -155,4 +140,3 @@ class Knowledge(object):
 
     def wk_search(self, title):
         return wk.summary(title)
->>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
