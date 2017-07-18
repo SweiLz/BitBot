@@ -4,4 +4,8 @@ __pycache__/
 src/temp_test
 resources/emotions/
 resources/videos/
+<<<<<<< HEAD
 resources/soundeffects/
+=======
+src/hotword.py
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7

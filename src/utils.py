@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+<<<<<<< HEAD
 import requests
 from bs4 import BeautifulSoup as soup
 import pafy
@@ -8,6 +9,19 @@ import pafy
 
 class Experience(object):
     pass
+=======
+import pafy
+import PyICU
+import requests
+import wikipedia as wk
+from bs4 import BeautifulSoup as soup
+from rivescript import RiveScript
+
+
+# class Experience(object):
+# pass
+
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
 
 
 class Personar(object):
@@ -92,5 +106,53 @@ class Sight(object):
         return video_url
 
 
+<<<<<<< HEAD
 # yt = Sight()
 # print(yt.yt_search("เพลงโดราเอม่อน"))
+=======
+class Chatty(object):
+    def __init__(self):
+        self._chatter = RiveScript(utf8=True)
+        self._chatter.load_directory("resources/brain")
+        self._chatter.sort_replies()
+        self.bd = PyICU.BreakIterator.createWordInstance(PyICU.Locale("th"))
+
+    def message(self, text):
+        return self._chatter.reply("localuser", self._warp(text))
+
+    @staticmethod
+    def _isThai(ch):
+        return 3584 <= ord(ch) <= 3711
+
+    def _warp(self, txt):
+        self.bd.setText(txt)
+        lastPos = self.bd.first()
+        retTxt = ""
+        try:
+            while True:
+                currentPos = next(self.bd)
+                retTxt += txt[lastPos:currentPos]
+                if (self._isThai(txt[currentPos - 1])) and (currentPos < len(txt)) and (self._isThai(txt[currentPos])):
+                    retTxt += " "
+                lastPos = currentPos
+        except StopIteration:
+            pass
+        return retTxt
+
+
+# yt = Sight()
+# print(yt.yt_search("เพลงโดราเอม่อน"))
+
+
+# chatter = Chatty()
+# while True:
+#     print(">>>", chatter.message(input("<<< ")))
+
+
+class Knowledge(object):
+    def __init__(self):
+        wk.set_lang("th")
+
+    def wk_search(self, title):
+        return wk.summary(title)
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7

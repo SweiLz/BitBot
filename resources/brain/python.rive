@@ -1,0 +1,120 @@
+// Example of a Python object macro.
+! version = 2.0
+
+// Easy Mathematic
+> object add python
+    a, b = args
+    return int(a) + int(b)
+< object
+
+> object minus python
+    a, b = args
+    return int(a) - int(b)
+< object
+
+> object power python
+    a, b = args
+    return int(a) ** int(b)
+< object
+
++  * บวก * [เท่า กับ|มี ค่า] [เท่า ไร]
+- <star1> + <star2> = <call>add <star1> <star2></call>
+
++  * ลบ * [เท่า กับ|มี ค่า] [เท่า ไร]
+- <star1> - <star2> = <call>minus <star1> <star2></call>
+
++ * ยก กำลัง * [เท่า กับ|มี ค่า] [เท่า ไร]
+- <star1> ยกกำลัง <star2> = <call>power <star1> <star2></call>
+
+> object date python
+    from datetime import datetime
+    a = args[0]
+    b = datetime.today()
+    if a == "year":
+        return str(b.year+543)
+    elif a == "month":
+        c = b.month
+        if c == 1:
+            return "มกราคม"
+        elif c == 2:
+            return "กุมภาพันธ์"
+        elif c == 3:
+            return "มีนาคม"
+        elif c == 4:
+            return "เมษายน"
+        elif c == 5:
+            return "พฤษภาคม"
+        elif c == 6:
+            return "มิถุนายน"
+        elif c == 7:
+            return "กรกฏาคม"
+        elif c == 8:
+            return "สิงหาคม"
+        elif c == 9:
+            return "กันยายน"
+        elif c == 10:
+            return "ตุลาคม"
+        elif c == 11:
+            return "พฤศจิกายน"
+        elif c == 12:
+            return "ธันวาคม"
+    elif a == "day":
+        c = b.weekday()
+        if c == 0:
+            return "จันทร์"
+        elif c == 1:
+            return "อังคาร"
+        elif c == 2:
+            return "พุธ"
+        elif c == 3:
+            return "พฤหัส"
+        elif c == 4:
+            return "ศุกร์"
+        elif c == 5:
+            return "เสาร์"
+        elif c == 6:
+            return "อาทิตย์"
+    elif a == "date":
+        return str(b.day)
+    elif a == "hour":
+        return str(b.hour)
+    elif a == "minute":
+        return str(b.minute)
+< object
+
++ พศ
+- ปีนี้ปี <call>date year</call> ค่ะ
+
++ [ปี นี้] ปี อะไร [*]
+- ปีนี้ปี <call>date year</call> ค่ะ
+
++ [เดือน นี้] เดือน [อะไร] [*]
+- เดือนนี้เดือน <call>date month</call> ค่ะ
+
++ [วัน นี้] วัน [อะไร] [*]
+- วันนี้วัน <call>date day</call> ค่ะ
+
++ [วัน นี้] วัน ที่ [เท่า ไร] [*]
+- วันนี้วันที่ <call>date date</call> ค่ะ
+
++ [วัน นี้] วัน [อาทิตย์|จันทร์|อังคาร|พุธ|พฤหัส|ศุกร์|พฤหัสบดี|เสาร์] ใช่ ไหม
+- วันนี้วัน <call>date day</call> ค่ะ
+
++ เวลา [*]
+- ตอนนี้เวลา <call>date hour</call> นาฬิกา <call>date minute</call> นาทีค่ะ
+
++ กี่ โมง [*]
+- ตอนนี้เวลา <call>date hour</call> นาฬิกา <call>date minute</call> นาทีค่ะ
+
+//
+//> object setvar python
+    //# This function demonstrates using rs.current_user() to get
+    //# the current user ID, to set a variable for them.
+    //uid   = rs.current_user()
+    //var   = args[0]
+    //value = " ".join(args[1:])
+    //rs.set_uservar(uid, var, value)
+//< object
+//
+//+ python set * to *
+//- Setting user variable <star1> to <star2>.<call>setvar <star1> <star2></call>

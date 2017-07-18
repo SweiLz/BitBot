@@ -1,9 +1,77 @@
 # from pytube import YouTube
+<<<<<<< HEAD
 from bitbot import Robot
 import time
 
 BB = Robot()
 yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
+=======
+# from bitbot import Robot
+# import json
+
+
+text = "สวัสดีเพื่อนๆของฉันเฟสบุ๊คด้วย"
+
+
+# import requests
+
+# Make it a bit prettier..
+# print("-" * 30)
+# print("This will show the Most Popular Videos on YouTube")
+# print("-" * 30)
+
+# # Get the feed
+# r = requests.get(
+#     "http://gdata.youtube.com/feeds/api/standardfeeds/top_rated?v=2.1&alt=jsonc")
+# # Convert it to a Python dictionary
+# # data = json.loads(r.text)
+# # print(data)
+# Loop through the result.
+# for item in data['data']['items']:
+
+#     print("Video Title: %s" % (item['title']))
+#     print("Video Category: %s" % (item['category']))
+#     print("Video ID: %s" % (item['id']))
+#     print("Video Rating: %f" % (item['rating']))
+#     print("Embed URL: %s" % (item['player']['default']))
+
+# import time
+
+
+# If you don't specify credentials when constructing the client, the
+# client library will look for credentials in the environment.
+
+
+# Make an authenticated API request
+
+# import speech_recognition as sr
+
+# # obtain path to "english.wav" in the same folder as this script
+# from os import path
+# AUDIO_FILE = "audio.wav"
+
+# # use the audio file as the audio source
+# r = sr.Recognizer()
+# with sr.AudioFile(AUDIO_FILE) as source:
+#     audio = r.record(source)  # read the entire audio file
+
+# # recognize speech using Google Cloud Speech
+# GOOGLE_CLOUD_SPEECH_CREDENTIALS = r"Amatar Robotics-8ca65f285ed6.json"
+
+# try:
+#     print("Google Cloud Speech thinks you said: " + r.recognize_google_cloud(audio,
+#                                                                              credentials_json=GOOGLE_CLOUD_SPEECH_CREDENTIALS))
+# except sr.UnknownValueError:
+#     print("Google Cloud Speech could not understand audio")
+# except sr.RequestError as e:
+#     print(
+#         "Could not request results from Google Cloud Speech service; {0}".format(e))
+# BB = Robot()
+# res = BB.know.wk_search("ภาษาไพทอน")
+# BB.speak(res, wait=True)
+
+# yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
 # ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
 
 # with ydl:
@@ -18,6 +86,7 @@ yt_list = BB.sight.yt_search("เพลงโดราเอม่อน")
 
 # print(result['url'])
 #
+<<<<<<< HEAD
 #link = "https://www.youtube.com/watch?v=IOYyCHGWJq4"
 
 # print(yt_list)
@@ -26,6 +95,16 @@ url = BB.sight.yt_genstream(yt_list[0])
 # print("OKKKK")
 BB.hdmi_open(url, sound=True)
 time.sleep(10)
+=======
+# link = "https://www.youtube.com/watch?v=IOYyCHGWJq4"
+
+# print(yt_list)
+# url = BB.sight.yt_genstream(yt_list[0])
+# # print(url)
+# print("OKKKK")
+# BB.hdmi_open(url, sound=True)
+# time.sleep(10)
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
 # time.sleep(5)
 # import requests
 # from bs4 import BeautifulSoup
@@ -48,17 +127,30 @@ time.sleep(10)
 # BB.loadYoutube(link)
 # print("OK")
 # time.sleep(5)
+<<<<<<< HEAD
 #cmd = ['youtube-dl', '-g', link]
+=======
+# cmd = ['youtube-dl', '-g', link]
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
 # print("Downloading")
 # yt = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
 #           close_fds=True, preexec_fn=os.setsid).communicate()[0]
 #
+<<<<<<< HEAD
 #url = yt.decode("utf-8").split('\n')[0]
 # print(url)
 #
 # print("Playing")
 #cmd = ['omxplayer', '--display', '0', '-o', 'local', url]
 ##os.system("omxplayer --display 0 -o local \"{0}\"".format(url))
+=======
+# url = yt.decode("utf-8").split('\n')[0]
+# print(url)
+#
+# print("Playing")
+# cmd = ['omxplayer', '--display', '0', '-o', 'local', url]
+# os.system("omxplayer --display 0 -o local \"{0}\"".format(url))
+>>>>>>> 6da35e78c2c6d784bfb68dd1999f4fb88d535fd7
 # Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE,
 #      close_fds=True, preexec_fn=os.setsid)
 # prin(res)

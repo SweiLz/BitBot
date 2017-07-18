@@ -22,3 +22,8 @@ Bitbot ถูกพัฒนาที่ BitStudio
 * Python 3.5.1 or later
 * Snowboy Hotword Detector
 
+## To-Do
+* [ ] แสดงอารมณ์ (หน้าตาแสดงอารมณ์ เสียง)
+* [ ] เรียกร้องความสนใจ (บ่น)
+* [ ] 
+* [ ] 
