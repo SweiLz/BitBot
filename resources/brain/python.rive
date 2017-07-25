@@ -4,7 +4,7 @@
 // Easy Mathematic
 > object add python
     a, b = args
-    return int(a) + int(b)
+    return str(int(a) + int(b))
 < object
 
 > object minus python
@@ -106,6 +106,19 @@
 + กี่ โมง [*]
 - ตอนนี้เวลา <call>date hour</call> นาฬิกา <call>date minute</call> นาทีค่ะ
 
+> object wiki python
+    text = "".join(args)
+    from utils import Knowledge
+    wk = Knowledge()
+    return wk.wk_search(text)
+< object
+
++ * คือ อะไร
+- <star1> คือ <call>wiki <star1></call>
+
++ * วัน ที่ เท่า ไหร่ ถ้า วัน นี้ วัน ที่ #
+* <formal> == พรุ่ง นี้ => วันที่ <call>add 1 <star></call>
+- เมื่อวานหรอ 
 //
 //> object setvar python
     //# This function demonstrates using rs.current_user() to get
