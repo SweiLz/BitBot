@@ -1,41 +1,148 @@
-# from pytube import YouTube
-import os
-from subprocess import PIPE, Popen
+# import os
 from bitbot import Robot
-# import json
-from utils import Chatty
+
+bb = Robot()
 
 
-def _create_task(cmd):
-    return Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
+def listen():
+    print("Listening")
+    bb.add_emo('Blink')
+    bb.audio_open("resources/ding2.wav")
+    input("Key to Continue")
+    print("During")
+    bb.add_emo('During')
+    bb.audio_open("resources/ding3.wav")
+    bb.add_emo('Smile')
 
 
-def speak(text, wait=False, process=False):
-    print("Speak:", text)
-    cmd = ['google_speech', '-l', 'th', text]
-    cmd += ['--sox-effects']
-    if process:
-        cmd += ['pitch', '50']
-        cmd += ['stretch', '2.5', '133.33']
-        cmd += ['lin', '0.2', '0.4']
-        cmd += ['overdrive', '25', '25']
-        cmd += ['echo', '0.4', '0.8', '15', '0.8']
-        cmd += ['synth', 'sine', 'fmod', '30']
-    if process:
-        cmd += ['speed', '3']
-    else:
-        cmd += ['speed', '1.3']
-    speaker = _create_task(cmd=cmd)
-    if wait:
-        speaker.wait()
+url1 = "https://r5---sn-5np5po4v-c33lk.googlevideo.com/videoplayback?signature=BC61702CB9D4404E6F5046BFBEAB41962993B23A.1701E98764FFE4C4922A3ED9D1B18A4E718E12F3&source=youtube&sparams=dur%2Cei%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpl%2Cratebypass%2Crequiressl%2Csource%2Cexpire&expire=1501089187&mime=video%2Fmp4&ip=171.101.53.191&id=o-AA73OiHudbcMPyWe8-QdGEMYThU-RQ7GBbs56oXmtAqQ&ratebypass=yes&requiressl=yes&mn=sn-5np5po4v-c33lk&mm=31&mt=1501067464&initcwndbps=2266250&ipbits=0&key=yt6&lmt=1497294238992749&dur=4786.956&pl=24&itag=22&mv=m&ms=au&ei=Q3l4WZeMGoLbogPrnKigBg"
+
+url2 = "https://r3---sn-5np5po4v-c33ly.googlevideo.com/videoplayback?ipbits=0&expire=1501089512&mime=video%2Fmp4&itag=18&ratebypass=yes&pl=24&clen=42653730&gir=yes&source=youtube&lmt=1500979284684760&id=o-ACUfOb93Y-YHE3u3oRm-RacPRSQadKAAKdp-9PH-Q36s&ms=au&mt=1501067799&initcwndbps=2315000&mv=m&signature=3228C115466296DD547884F9BCD67CEC41EC8EC2.BBC052721AFBAF583AC443CA1B6BDA664EB8908E&key=yt6&ip=171.101.53.191&mm=31&mn=sn-5np5po4v-c33ly&ei=iHp4WdiiI4LSoAP4ko2QCg&dur=705.654&sparams=clen%2Cdur%2Cei%2Cgcr%2Cgir%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpl%2Cratebypass%2Crequiressl%2Csource%2Cexpire&gcr=th&requiressl=yes"
 
 
-text = "สวัสดีครับ"
+def youtube():
+    print("Youtube")
+    bb.speak("ฉันเปิด Youtube แล้ว อยากให้ค้นหาว่าอะไรหรอ")
+    input()
+    listen()
+    bb.add_emo('Loading')
+    bb.speak('ฉันขอเวลาไปหา วีดีโอ ให้คุณสักพักนะ อย่าพึ่งไปไหนหละ เดี๋ยวฉันมา')
 
-chat = Chatty()
-while True:
-    txt = input("<<< ")
-    speak(chat.message(txt))
+    k = input(">> video")
+    bb.add_emo('During')
+    bb.speak('โอเค ฉันเจอวิดีโอของคุณแล้ว')
+    if k == 'a':
+        bb.hdmi_open(url1, sound=True)
+    elif k == 's':
+        bb.hdmi_open(url2, sound=True)
+
+
+def playvideo(num):
+    print('resources/videos/A-{}.mp4'.format(num))
+    bb.speak("กำลังเปิดวีดีโอที่{0}".format(num))
+    input()
+    bb.hdmi_open('resources/videos/A-{}.mp4'.format(num), sound=True)
+
+
+def makefood():
+    print("make food")
+    bb.speak("ฉันจะสอนคุณทำอาหารเอง")
+    bb.hdmi_open('resources/videos/motion_01.mp4')
+
+
+def makepaper():
+    print("make paper")
+    bb.speak("ฉันจะสอนคุณพับกระดาษ")
+    bb.hdmi_open('resources/videos/motion_02.mp4')
+
+
+def makedraw():
+    print("make draw")
+    bb.speak("ฉันจะสอนคุณวาดรูปช้าง")
+    bb.hdmi_open('resources/videos/motion_03.mp4')
+
+
+def main():
+    print("Welcome")
+    while True:
+        key = input(">>>")
+        if key == 'l':
+            listen()
+        elif key == 'y':
+            youtube()
+        elif key == 'q':
+            bb.speak("ฉันฟังไม่เข้าใจ กรุณาพูดใหม่อีกครั้ง")
+        elif key == 'c':
+            bb.hdmi_close()
+        elif key == '1':
+            playvideo(int(key))
+        elif key == '2':
+            playvideo(int(key))
+        elif key == '3':
+            playvideo(int(key))
+        elif key == '4':
+            playvideo(int(key))
+        elif key == '5':
+            playvideo(int(key))
+        elif key == '6':
+            playvideo(int(key))
+        elif key == '7':
+            playvideo(int(key))
+        elif key == '8':
+            playvideo(int(key))
+        elif key == '9':
+            playvideo(int(key))
+        elif key == 'n':
+            makefood()
+        elif key == 'm':
+            makepaper()
+        elif key == ',':
+            makedraw()
+        elif key == 'w':
+            txt = input("text >> ")
+            bb.speak(txt)
+
+
+if __name__ == '__main__':
+    main()
+# from pytube import YouTube
+# import os
+# from subprocess import PIPE, Popen
+# from bitbot import Robot
+# # import json
+# from utils import Chatty
+
+
+# def _create_task(cmd):
+#     return Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
+
+
+# def speak(text, wait=False, process=False):
+#     print("Speak:", text)
+#     cmd = ['google_speech', '-l', 'th', text]
+#     cmd += ['--sox-effects']
+#     if process:
+#         cmd += ['pitch', '50']
+#         cmd += ['stretch', '2.5', '133.33']
+#         cmd += ['lin', '0.2', '0.4']
+#         cmd += ['overdrive', '25', '25']
+#         cmd += ['echo', '0.4', '0.8', '15', '0.8']
+#         cmd += ['synth', 'sine', 'fmod', '30']
+#     if process:
+#         cmd += ['speed', '3']
+#     else:
+#         cmd += ['speed', '1.3']
+#     speaker = _create_task(cmd=cmd)
+#     if wait:
+#         speaker.wait()
+
+
+# text = "สวัสดีครับ"
+
+# chat = Chatty()
+# while True:
+#     txt = input("<<< ")
+#     speak(chat.message(txt))
 # print(BB.chatty.message(text))
 
 
