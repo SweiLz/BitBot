@@ -2,6 +2,34 @@
 
 Bitbot ถูกพัฒนาที่ BitStudio
 
+## How to use
+
+Connect to raspberrypi
+
+ip [192.168.1.243]
+
+wifi ssid : bitworkshop
+
+**Connect SSH**
+``` shell
+sweilz@Liews:~$ ssh pi@192.168.1.243
+pi@192.168.1.243's password: raspberry
+```
+
+**Run Script**
+``` bash
+pi@raspberrypi:~ $ cd Documents/BitStudio/BitBot/
+pi@raspberrypi:~/Documents/BitStudio/BitBot $ python3 src/main.py
+```
+
+**Test Script**
+
+ใช้สำหรับทดสอบฟังก์ชั่นการทำงานของ Bitbot
+
+``` bash
+pi@raspberrypi:~/Documents/BitStudio/BitBot $ python3 src/runner.py
+```
+
 ### Bitbot features:
 
 * [x] Generate speech from text
@@ -35,35 +63,6 @@ Bitbot ถูกพัฒนาที่ BitStudio
 ``` 
 $ sudo apt-get install sox libatlas-base-dev python3-pyaudio python3-dev
 $ sudo apt-get install autoconf automake libtool bison libpcre3 libpcre3-dev 
-```
-
-
-## How to use
-
-Connect to raspberrypi
-
-ip [192.168.1.243]
-
-wifi ssid : bitworkshop
-
-**Connect SSH**
-``` shell
-sweilz@Liews:~$ ssh pi@192.168.1.243
-pi@192.168.1.243's password: raspberry
-```
-
-**Run Script**
-``` bash
-pi@raspberrypi:~ $ cd Documents/BitStudio/BitBot/
-pi@raspberrypi:~/Documents/BitStudio/BitBot $ python3 src/main.py
-```
-
-**Test Script**
-
-ใช้สำหรับทดสอบฟังก์ชั่นการทำงานของ Bitbot
-
-``` bash
-pi@raspberrypi:~/Documents/BitStudio/BitBot $ python3 src/runner.py
 ```
 
 ## Train Hotword Model
