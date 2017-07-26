@@ -117,6 +117,12 @@ class HotwordDetector(object):
             rate=self.detector.SampleRate(),
             frames_per_buffer=2048,
             stream_callback=audio_callback)
+        # print('format :', self.audio.get_format_from_width(
+        #     self.detector.BitsPerSample() / 8))
+        # print('channels :', self.detector.NumChannels())
+        # print('rate :', self.detector.SampleRate())
+        # print('stream_callback :', audio_callback)
+        # print('stream_in  :', self.stream_in)
 
     def start(self, detected_callback=play_audio_file,
               interrupt_check=lambda: False,
@@ -163,7 +169,7 @@ class HotwordDetector(object):
                     time.sleep(sleep_time)
                 except KeyboardInterrupt:
                     os.system("killall -s 9 python3 omxplayer.bin")
-                
+
                 continue
 
             ans = self.detector.RunDetection(data)
@@ -181,7 +187,6 @@ class HotwordDetector(object):
                         callback()
                     except KeyboardInterrupt:
                         os.system("killall -s 9 python3 omxplayer.bin")
-                        
 
         logger.debug("finished.")
 

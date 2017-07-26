@@ -1,9 +1,42 @@
 # from pytube import YouTube
-# from bitbot import Robot
+import os
+from subprocess import PIPE, Popen
+from bitbot import Robot
 # import json
+from utils import Chatty
 
 
-text = "สวัสดีเพื่อนๆของฉันเฟสบุ๊คด้วย"
+def _create_task(cmd):
+    return Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True, preexec_fn=os.setsid)
+
+
+def speak(text, wait=False, process=False):
+    print("Speak:", text)
+    cmd = ['google_speech', '-l', 'th', text]
+    cmd += ['--sox-effects']
+    if process:
+        cmd += ['pitch', '50']
+        cmd += ['stretch', '2.5', '133.33']
+        cmd += ['lin', '0.2', '0.4']
+        cmd += ['overdrive', '25', '25']
+        cmd += ['echo', '0.4', '0.8', '15', '0.8']
+        cmd += ['synth', 'sine', 'fmod', '30']
+    if process:
+        cmd += ['speed', '3']
+    else:
+        cmd += ['speed', '1.3']
+    speaker = _create_task(cmd=cmd)
+    if wait:
+        speaker.wait()
+
+
+text = "สวัสดีครับ"
+
+chat = Chatty()
+while True:
+    txt = input("<<< ")
+    speak(chat.message(txt))
+# print(BB.chatty.message(text))
 
 
 # import requests

@@ -7,7 +7,7 @@ from subprocess import PIPE, Popen
 
 import speech_recognition as sr
 
-from utils import Personar, Sight
+from utils import Personar, Sight, Chatty
 
 
 emotions = {
@@ -19,7 +19,8 @@ emotions = {
     "Notification": ['emotions/bitbot_nontification.m4v', 11.03],
     "Bomb": ['emotions/bitbot_bomb.mp4', 5.11],
     "Loading": ['emotions/bitbot_downloading.m4v', 2.23],
-    "During": ['emotions/bitbot_during_clip.m4v', 3.73]
+    "During": ['emotions/bitbot_during_clip.m4v', 3.73],
+    "Confused": ['emotions/bitbot_confused.m4v',4.9]
 }
 
 
@@ -34,18 +35,21 @@ class Robot:
         self.dis_player = [[None, None], [None, None]]
         self.info = Personar()
         self.sight = Sight()
+        self.chatty = Chatty()
         self.emo_queue = queue.Queue()
         self.emo_flag = True
-        threading.Thread(target=self.play_emotions).start()
-
+        self.hdmi_volume = -600  # - : reduce volume , + increase volume
+        self.speak_volume = 3
+        # threading.Thread(target=self.play_emotions).start()
+        self.dsi_open(emotions['Smile'][0], loop=True)
         self.r = sr.Recognizer()
         '''
         energy_threshold range is 0-4000  , silent room are 0-00 , louder room are 3000-4000
         high value = less sensitive 
         '''
-        # self.r.energy_threshold = 0
+        self.r.energy_threshold = 2300
         self.r.dynamic_energy_threshold = True
-        # self.r.pause_threshold = 0.5
+        # self.r.pause_threshold =00.5
         ''' timeout is the maximum number of seconds that this will wait for
         # a phrase to start before giving up
         # The phrase_time_limit parameter is the maximum number of seconds
@@ -94,7 +98,7 @@ class Robot:
         cmd = ['omxplayer', fname, '-b', '--no-osd', '--layer',
                str(self.dis_layer[num]), '--display']
         cmd += ['5', '--orientation', '180'] if num else ['0']
-        cmd += ['-o', 'local'] if sound else ['-n', '-1']
+        cmd += ['-o', 'local', '--vol', str(self.hdmi_volume)] if sound else ['-n', '-1']
         if loop:
             cmd += ['--loop']
         if num == 0:
@@ -134,7 +138,7 @@ class Robot:
     def speak(self, text, wait=False, process=False):
         print("Speak:", text)
         cmd = ['google_speech', '-l', 'th', text]
-        cmd += ['--sox-effects']
+        cmd += ['--sox-effects', 'gain', str(self.speak_volume)]
         if process:
             cmd += ['pitch', '50']
             cmd += ['stretch', '2.5', '133.33']
@@ -172,6 +176,7 @@ class Robot:
 
     def add_emo(self, emo, num=1):
         print("### Add Emotions ###")
+        self.dsi_open(emotions[emo][0], loop=True)
         for i in range(num):
             self.emo_queue.put(emotions[emo])
 

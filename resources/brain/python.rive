@@ -106,6 +106,16 @@
 + กี่ โมง [*]
 - ตอนนี้เวลา <call>date hour</call> นาฬิกา <call>date minute</call> นาทีค่ะ
 
+> object wiki python
+    text = "".join(args)
+    from utils import Knowledge
+    wk = Knowledge()
+    return wk.wk_search(text)
+< object
+
++ * คือ อะไร
+- <star1> คือ <call>wiki <star1></call>
+
 //
 //> object setvar python
     //# This function demonstrates using rs.current_user() to get
