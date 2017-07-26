@@ -4,7 +4,7 @@
 // Easy Mathematic
 > object add python
     a, b = args
-    return int(a) + int(b)
+    return str(int(a) + int(b))
 < object
 
 > object minus python
@@ -116,6 +116,12 @@
 + * คือ อะไร
 - <star1> คือ <call>wiki <star1></call>
 
+<<<<<<< HEAD
+=======
++ * วัน ที่ เท่า ไหร่ ถ้า วัน นี้ วัน ที่ #
+* <formal> == พรุ่ง นี้ => วันที่ <call>add 1 <star></call>
+- เมื่อวานหรอ 
+>>>>>>> daffce72f8642d13abf7ad414343e025309ac50e
 //
 //> object setvar python
     //# This function demonstrates using rs.current_user() to get

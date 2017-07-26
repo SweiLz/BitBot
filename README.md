@@ -2,7 +2,7 @@
 
 Bitbot ถูกพัฒนาที่ BitStudio
 
-## Bitbot features:
+### Bitbot features:
 
 * [x] Generate speech from text
 * [x] Play audio file
@@ -17,13 +17,22 @@ Bitbot ถูกพัฒนาที่ BitStudio
 * [ ] Camera Capture
 * [ ] Face Recognition
 
-## Requirements:
+### Requirements:
 * Raspberry Pi 3 with Raspbian
 * Python 3.5.1 or later
 * Snowboy Hotword Detector
 
-## To-Do
+### To-Do
 * [ ] แสดงอารมณ์ (หน้าตาแสดงอารมณ์ เสียง)
 * [ ] เรียกร้องความสนใจ (บ่น)
-* [ ] 
-* [ ] 
+
+## Installation
+
+* Initial Setup
+    * Raspberry Pi 3 with Raspbian
+    * Python 3.5.1 or later
+    * Snowboy Hotword Detector
+
+``` 
+    apt-get install sox libatlas-base-dev python3-pyaudio python3-dev autoconf automake libtool bison libpcre3 libpcre3-dev 
+```
